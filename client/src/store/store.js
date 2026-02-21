@@ -3,7 +3,8 @@ import authResucer from "./slices/authSlice"
 import popupReduser from "./slices/popUpSlice"
 import userReducer from "./slices/userSlice"
 import videoReducer from "./slices/videoSlice"; 
-
+import playerReducer from "./slices/playerSlice";
+import paymentReducer from "./slices/paymentSlice";
 
 
 export const store = configureStore({
@@ -12,6 +13,8 @@ export const store = configureStore({
         popup:popupReduser,
         user:userReducer,
         videos: videoReducer,
+        player: playerReducer,
+        payment: paymentReducer,
     },
     
 })

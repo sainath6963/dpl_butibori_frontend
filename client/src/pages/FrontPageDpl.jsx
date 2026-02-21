@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { toggleRegisterPopup } from "../store/slices/popUpSlice";
 import { getAllVideos } from "../store/slices/videoSlice";
-import RegisterPopup from "../popups/RegisterPopup";
+import PlayerRegistrationPopup from "../popups/PlayerRegistrationPopup";
 import { useNavigate } from "react-router-dom";
+
 
 import img1 from "../assets/1.jpg.jpeg";
 import img2 from "../assets/2.jpg.jpeg";
@@ -30,6 +31,7 @@ const FrontPageDpl = () => {
     
     // Get videos from Redux store - match your backend response structure
     const { videos: videoList, loading: videosLoading } = useSelector((state) => state.videos);
+    const { registerPopup } = useSelector((state) => state.popup);
     
     const [isVisible, setIsVisible] = useState({});
     const [currentVideo, setCurrentVideo] = useState(0);
@@ -867,6 +869,12 @@ const FrontPageDpl = () => {
                     </div>
                 </div>
             </footer>
+
+            {/* ✅ ADD THIS LINE EXACTLY HERE */}
+<PlayerRegistrationPopup
+  isOpen={registerPopup}
+  onClose={() => dispatch(toggleRegisterPopup())}
+/>
 
             <style jsx>{`
                 @keyframes fade-in-up {
