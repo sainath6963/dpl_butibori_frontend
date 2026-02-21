@@ -3,8 +3,8 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import SideBar from "../layout/SideBar";
-import UserDashBoard from "../components/UserDashboard";
-import AdminDashBoard from "../components/AdminDashboard";
+import UserDashboard from "../components/UserDashboard";
+import AdminDashboard from "../components/AdminDashboard";
 // import BookManagement from "../components/BookManagement";
 // import Catalog from "../components/Catalog";
 import Users from "../components/Users";
@@ -16,30 +16,36 @@ const Home = () => {
 
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
+  console.log("Home component - User:", user); // Debug log
+  console.log("Home component - isAuthenticated:", isAuthenticated); // Debug log
+
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
   const renderComponent = () => {
+    console.log("Rendering component for role:", user?.role); // Debug log
+    console.log("Selected component:", selectedComponent); // Debug log
+
     switch (selectedComponent) {
       case "Dashboard":
-        return user?.role === "User" ? (
-          <AdminDashBoard  />
+        return user?.role === "Admin" ? (
+          <AdminDashboard />
         ) : (
-          <AdminDashBoard />
+          <UserDashboard />
         );
 
       // case "Books":
       //   return <BookManagement />;
 
       // case "catalog":
-      //   if (user.role === "Admin") {
+      //   if (user?.role === "Admin") {
       //     return <Catalog />;
       //   }
       //   return null;
 
       case "Users":
-        if (user.role === "Admin") {
+        if (user?.role === "Admin") {
           return <Users />;
         }
         return null;
@@ -48,10 +54,10 @@ const Home = () => {
       //   return <MyBorrowedBooks />;
 
       default:
-        return user?.role === "User" ? (
-          <UserDashBoard />
+        return user?.role === "Admin" ? (
+          <AdminDashboard />
         ) : (
-          <AdminDashBoard />
+          <UserDashboard />
         );
     }
   };
@@ -70,10 +76,12 @@ const Home = () => {
           isSideBarOpen={isSideBarOpen}
           setIsSideBarOpen={setIsSideBarOpen}
           setSelectedComponent={setSelectedComponent}
+          userRole={user?.role} // Pass user role to SideBar
         />
 
-       
-        {renderComponent()}
+        <div className="flex-1 p-6">
+          {renderComponent()}
+        </div>
       </div>
     </>
   );

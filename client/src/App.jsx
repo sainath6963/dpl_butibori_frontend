@@ -15,29 +15,38 @@ import { fetchUserBorrowedBooks } from "./store/slices/borrowSlice";
 import FrontPageDpl from "./pages/frontpagedpl";
 
 const App = () => {
-  const{user , isAuthenticated} = useSelector(state => state.auth);
+  const { user, isAuthenticated } = useSelector(state => state.auth);
   const dispatch = useDispatch();
-  useEffect(()=>{
+
+  useEffect(() => {
     dispatch(getUser());
-   if(isAuthenticated && user?.role ==="Admin"){
-    dispatch(fetchAllUsers())
-     dispatch(fetchAllBooks())
-     dispatch(fetchUserBorrowedBooks())
-   }
-  },[isAuthenticated])
+  }, [dispatch]); // Run only once on mount
+
+  useEffect(() => {
+    if (isAuthenticated && user?.role === "Admin") {
+      console.log("Admin detected, fetching data..."); // Debug log
+      // dispatch(fetchAllUsers());
+      // dispatch(fetchAllBooks());
+      // dispatch(fetchUserBorrowedBooks());
+    }
+  }, [isAuthenticated, user, dispatch]);
+
+  console.log("App - User:", user); // Debug log
+  console.log("App - isAuthenticated:", isAuthenticated); // Debug log
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<FrontPageDpl />} />
-         <Route path="/login" element={<Login/>} />
-
-        {/* <Route path="/login" element={<Login />} /> */}
-
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/password/forgot" element={<ForgotPassword />} />
         <Route path="/otp-verification/:email" element={<OTP />} />
         <Route path="/password/reset/:token" element={<ResetPassword />} />
+        
+        {/* Protected Home Route - Add this */}
+        <Route path="/home" element={<Home />} />
+        <Route path="/dashboard" element={<Home />} />
       </Routes>
       <ToastContainer theme="dark" />
     </Router>

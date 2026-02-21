@@ -110,7 +110,7 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
             </>
           )}
 
-          {isAuthenticated && user?.role === "User" && (
+          {/* {isAuthenticated && user?.role === "User" && (
             <>
               <button
                 onClick={() => {
@@ -123,7 +123,7 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
                 <span className="text-sm font-medium">My Books</span>
               </button>
             </>
-          )}
+          )} */}
 
           <button
             onClick={() => dispatch(toggleSettingPopup())}

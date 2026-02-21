@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from "react";
-// import logo_with_title from "../assets/logo-with-title.png";
 import { useDispatch, useSelector } from "react-redux";
 import { login, resetAuthSlice } from "../store/slices/authSlice";
-import { Navigate, Link } from "react-router-dom";
+import { Navigate, Link, useNavigate } from "react-router-dom"; // Add useNavigate
 import { toast } from "react-toastify";
-
-// Import cricket-themed icons (you can also use Font Awesome)
-const CricketIcons = {
-  bat: "🏏",
-  ball: "⚾",
-  stumps: "🏏",
-  trophy: "🏆",
-  cricket: "🏏"
-};
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const dispatch = useDispatch();
-  const { loading, error, message, isAuthenticated } = useSelector(
+  const navigate = useNavigate(); // Add navigate hook
+  const { loading, error, message, isAuthenticated, user } = useSelector(
     (state) => state.auth
   );
 
@@ -42,8 +34,22 @@ const Login = () => {
     }
   }, [dispatch, error, message]);
 
+  // Redirect to dashboard when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log("Login successful - Redirecting to dashboard");
+      console.log("User role:", user?.role);
+      
+      // Small delay to ensure state is updated
+      setTimeout(() => {
+        navigate("/home"); // Navigate to home/dashboard
+      }, 100);
+    }
+  }, [isAuthenticated, navigate, user]);
+
+  // If already authenticated, redirect to home
   if (isAuthenticated) {
-    return <Navigate to={"/"} />;
+    return <Navigate to="/home" replace />;
   }
 
   return (
@@ -82,7 +88,6 @@ const Login = () => {
           -translate-x-1/2 -translate-y-1/2 animate-pulse delay-700" />
 
         <div className="relative z-10">
-
           {/* Tournament Tagline */}
           <div className="mt-8 inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
             <span className="w-2 h-2 bg-amber-400 rounded-full animate-ping"></span>
@@ -150,9 +155,8 @@ const Login = () => {
       {/* Right Section - Login Form */}
       <div className="flex justify-center items-center w-full lg:w-1/2 px-6 md:px-16 py-10">
         <div className="w-full max-w-md">
-          {/* Mobile Logo (visible only on mobile) */}
+          {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
-            {/* <img src={logo_with_title} alt="DPL Cricket League" className="h-16 mx-auto mb-4" /> */}
             <h2 className="text-2xl font-bold text-gray-800">Admin Login</h2>
             <p className="text-gray-500 text-sm mt-1">Access tournament management dashboard</p>
           </div>
@@ -218,7 +222,12 @@ const Login = () => {
               {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 text-sm text-gray-600">
-                  <input type="checkbox" className="rounded border-gray-300 text-amber-500 focus:ring-amber-400" />
+                  <input 
+                    type="checkbox" 
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="rounded border-gray-300 text-amber-500 focus:ring-amber-400" 
+                  />
                   <span>Remember me</span>
                 </label>
                 <Link

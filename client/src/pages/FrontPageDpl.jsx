@@ -795,7 +795,7 @@ const FrontPageDpl = () => {
                         className="bg-gradient-to-r from-amber-500 to-amber-400 text-slate-900 px-12 py-5 rounded-xl font-bold text-xl shadow-2xl hover:shadow-amber-500/30 transform hover:scale-105 transition-all duration-300"
                     >
                         <i className="fa-solid fa-cricket mr-2"></i>
-                        REGISTER YOUR TEAM
+                        REGISTER 
                     </button>
                 </div>
             </section>
