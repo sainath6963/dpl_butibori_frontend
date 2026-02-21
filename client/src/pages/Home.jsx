@@ -24,7 +24,7 @@ const Home = () => {
     switch (selectedComponent) {
       case "Dashboard":
         return user?.role === "User" ? (
-          <UserDashBoard />
+          <AdminDashBoard  />
         ) : (
           <AdminDashBoard />
         );
