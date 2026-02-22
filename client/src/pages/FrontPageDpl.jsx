@@ -1035,7 +1035,7 @@ const FrontPageDpl = () => {
     }, [displayVideos.length, currentVideo]);
 
     // Teams Images
-    const Teams = [
+    const sponsors = [
         img1, img2, img3, img4,
         img5, img6, img7, img8,
         img9, img10, img11, img12,
