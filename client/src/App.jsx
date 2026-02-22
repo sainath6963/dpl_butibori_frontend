@@ -13,6 +13,7 @@ import FrontPageDpl from "./pages/FrontPageDpl";
 import PressConferencePage from "./pages/PressConference";
 import AuctionDaysPage from "./pages/AuctionDays";
 import Header from "./layout/Header"; // Import Header
+import VideoDetailPage from "./pages/VideoDetailPage";
 import TrialDaySelection from "./pages/TrialDaySelection";
 
 // Layout component to wrap pages with Header
@@ -67,6 +68,11 @@ const App = () => {
         <Route path="/trialdayselection" element={
           <PageLayout>
             <TrialDaySelection />     
+          </PageLayout>
+        } />
+        <Route path="/videos" element={
+          <PageLayout>
+            <VideoDetailPage />
           </PageLayout>
         } />
 
