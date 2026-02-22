@@ -4,6 +4,8 @@ import { toggleRegisterPopup } from "../store/slices/popUpSlice";
 import { getAllVideos } from "../store/slices/videoSlice";
 import PlayerRegistrationPopup from "../popups/PlayerRegistrationPopup";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/dpl-logo.jpeg";
+
 
 
 import img1 from "../assets/1.jpg.jpeg";
@@ -177,21 +179,42 @@ const FrontPageDpl = () => {
                                 <span className="text-amber-400 font-medium">TOURNAMENT BEGINS IN 10 DAYS</span>
                             </div>
                         </div>
-                        
-                        <h1 className="text-7xl md:text-8xl font-black mb-4 tracking-tight leading-none">
-                            <span className="bg-gradient-to-r from-amber-400 via-white to-amber-400 bg-clip-text text-transparent">
-                            DPL Butibori
-                            </span>
-                            <br />
-                            <span className="relative">
-                                <span className="bg-gradient-to-r from-amber-500 to-amber-300 bg-clip-text text-transparent">
-                                    CRICKET LEAGUE
-                                </span>
-                                <span className="absolute -top-6 -right-12 bg-gradient-to-r from-amber-500 to-amber-400 text-slate-900 text-sm px-3 py-1 rounded-full font-bold rotate-12 shadow-lg">
-                                    2026
-                                </span>
-                            </span>
-                        </h1>
+          <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-tight text-center">
+
+  {/* Logo + DPL Text Row */}
+  <span className="flex items-center justify-center gap-3 mb-4">
+
+    {/* Small Modern Logo */}
+    <span className="bg-white/10 backdrop-blur-md border border-white/20 p-2 rounded-xl shadow-lg">
+      <img
+        src={logo}
+        alt="DPL Logo"
+        className="h-8 md:h-10 w-auto object-contain"
+      />
+    </span>
+
+    {/* DPL Text */}
+    <span className="bg-gradient-to-r from-amber-400 via-white to-amber-400 bg-clip-text text-transparent">
+      DPL
+    </span>
+
+  </span>
+
+  {/* Tournament Name */}
+  <span className="relative inline-block">
+
+    <span className="bg-gradient-to-r from-amber-500 to-amber-300 bg-clip-text text-transparent">
+      Flood Light Cricket Tournament
+    </span>
+
+    {/* Season Badge */}
+    <span className="absolute -top-5 -right-10 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 text-xs md:text-sm px-3 py-1 rounded-full font-bold shadow-xl border border-white/30">
+      Season 2 • 2026
+    </span>
+
+  </span>
+
+</h1>
                         
                         <p className="text-xl md:text-2xl mb-6 text-slate-300 flex items-center justify-center gap-4 flex-wrap">
                             <span className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full">
