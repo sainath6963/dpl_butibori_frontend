@@ -1,3 +1,7 @@
+// 
+
+
+
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -96,12 +100,12 @@ export default function PressConferenceGallery() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#0A2472] via-[#1E293B] to-[#0A2472] text-white">
       
       {/* Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#94A3B8]/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       {/* Main Content */}
@@ -115,18 +119,18 @@ export default function PressConferenceGallery() {
           className="text-center mb-16"
         >
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-6 border border-white/20">
-            <Camera className="w-4 h-4 text-purple-400" />
+            <Camera className="w-4 h-4 text-white" />
             <span className="text-sm font-medium text-white/90">Media Gallery</span>
-            <Sparkles className="w-4 h-4 text-blue-400" />
+            <Sparkles className="w-4 h-4 text-[#94A3B8]" />
           </div>
           
           <h1 className="text-5xl md:text-7xl font-black mb-6">
-            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-white via-[#F1F5F9] to-[#94A3B8] bg-clip-text text-transparent">
               Press Conference
             </span>
           </h1>
           
-          <p className="text-xl text-white/70 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-[#F1F5F9] max-w-2xl mx-auto leading-relaxed">
             Capturing the defining moments, impactful statements, and exclusive media interactions
           </p>
 
@@ -143,10 +147,10 @@ export default function PressConferenceGallery() {
               { icon: Calendar, label: "Event Date", value: "March 2024" }
             ].map((stat, index) => (
               <div key={index} className="flex items-center gap-3 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-2xl border border-white/10">
-                <stat.icon className="w-5 h-5 text-purple-400" />
+                <stat.icon className="w-5 h-5 text-white" />
                 <div>
                   <div className="text-2xl font-bold">{stat.value}</div>
-                  <div className="text-sm text-white/60">{stat.label}</div>
+                  <div className="text-sm text-[#F1F5F9]">{stat.label}</div>
                 </div>
               </div>
             ))}
@@ -160,8 +164,8 @@ export default function PressConferenceGallery() {
               onClick={() => setViewMode('grid')}
               className={`px-4 py-2 rounded-xl transition-all ${
                 viewMode === 'grid' 
-                  ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white' 
-                  : 'text-white/60 hover:text-white'
+                  ? 'bg-[#0A2472] text-white' 
+                  : 'text-[#F1F5F9] hover:text-white'
               }`}
             >
               <Grid className="w-4 h-4 inline mr-2" />
@@ -171,8 +175,8 @@ export default function PressConferenceGallery() {
               onClick={() => setViewMode('compact')}
               className={`px-4 py-2 rounded-xl transition-all ${
                 viewMode === 'compact' 
-                  ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white' 
-                  : 'text-white/60 hover:text-white'
+                  ? 'bg-[#0A2472] text-white' 
+                  : 'text-[#F1F5F9] hover:text-white'
               }`}
             >
               <Maximize2 className="w-4 h-4 inline mr-2" />
@@ -210,22 +214,22 @@ export default function PressConferenceGallery() {
               />
               
               {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A2472] via-[#0A2472]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               
               {/* Image Info - Only show in grid mode */}
               {viewMode === 'grid' && (
                 <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
                   <h3 className="text-lg font-semibold text-white mb-1">{image.title}</h3>
-                  <p className="text-sm text-white/70">{image.date}</p>
+                  <p className="text-sm text-[#F1F5F9]">{image.date}</p>
                   <div className="flex items-center gap-2 mt-2">
-                    <Users className="w-3 h-3 text-purple-400" />
-                    <span className="text-xs text-white/60">{image.attendees} attendees</span>
+                    <Users className="w-3 h-3 text-white" />
+                    <span className="text-xs text-[#F1F5F9]">{image.attendees} attendees</span>
                   </div>
                 </div>
               )}
               
               {/* Hover Overlay Effect */}
-              <div className="absolute inset-0 border-2 border-white/0 group-hover:border-purple-400/50 rounded-2xl transition-all duration-500"></div>
+              <div className="absolute inset-0 border-2 border-white/0 group-hover:border-white/50 rounded-2xl transition-all duration-500"></div>
             </motion.div>
           ))}
         </motion.div>
@@ -238,7 +242,7 @@ export default function PressConferenceGallery() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-[#0A2472]/95 backdrop-blur-xl flex items-center justify-center"
             onClick={closeLightbox}
           >
             {/* Close Button */}
@@ -280,14 +284,14 @@ export default function PressConferenceGallery() {
               />
               
               {/* Image Details */}
-              <div className="absolute bottom-6 left-6 right-6 bg-black/50 backdrop-blur-md rounded-2xl p-4">
+              <div className="absolute bottom-6 left-6 right-6 bg-[#1E293B]/80 backdrop-blur-md rounded-2xl p-4 border border-white/10">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-xl font-semibold text-white">{selectedImage.title}</h3>
-                    <p className="text-white/70">{selectedImage.date}</p>
+                    <p className="text-[#F1F5F9]">{selectedImage.date}</p>
                   </div>
                   <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl">
-                    <Users className="w-4 h-4 text-purple-400" />
+                    <Users className="w-4 h-4 text-white" />
                     <span className="text-white">{selectedImage.attendees} attendees</span>
                   </div>
                 </div>
@@ -295,7 +299,7 @@ export default function PressConferenceGallery() {
             </motion.div>
 
             {/* Image Counter */}
-            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-black/50 backdrop-blur-md px-4 py-2 rounded-full text-white/80">
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-[#1E293B]/80 backdrop-blur-md px-4 py-2 rounded-full text-white/80 border border-white/10">
               {currentIndex + 1} / {images.length}
             </div>
           </motion.div>

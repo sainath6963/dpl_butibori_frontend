@@ -1082,7 +1082,7 @@ const FrontPageDpl = () => {
         <div className="font-sans bg-gradient-to-b from-[#F8FAFC] to-white overflow-x-hidden">
             
             {/* Top Notification Bar */}
-            <div className="bg-[#0A2472] text-white py-3 px-4 border-b border-white/10 sticky top-0 z-50 backdrop-blur-lg bg-opacity-95">
+            {/* <div className="bg-[#0A2472] text-white py-3 px-4 border-b border-white/10 sticky top-0 z-50 backdrop-blur-lg bg-opacity-95">
                 <div className="max-w-7xl mx-auto flex items-center justify-between text-sm">
                     <div className="flex items-center gap-4">
                         <div className="relative">
@@ -1108,7 +1108,7 @@ const FrontPageDpl = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             {/* Hero Section */}
             <section className="relative bg-gradient-to-br from-[#0A2472] via-[#1E293B] to-[#0A2472] text-white py-32 text-center overflow-hidden">

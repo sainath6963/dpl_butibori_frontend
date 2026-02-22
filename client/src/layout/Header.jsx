@@ -19,7 +19,9 @@ import {
   Trophy,
   Users,
   Phone,
-  X
+  X,
+  Gavel,
+
 } from "lucide-react";
 
 const Header = () => {
@@ -84,8 +86,8 @@ const Header = () => {
   const navItems = [
     { name: 'Home', icon: Home, path: '/' },
     { name: 'Videos', icon: Video, path: '/videos' },
-    { name: 'Press Conference', icon: Camera, path: '/press-conference', highlight: true },
-    {name: 'Auction Days', icon: Camera,path: '/auctiondays', highlight: true},
+    { name: 'Press Conference', icon: Camera, path: '/press-conference' },
+    {name: 'Auction Days', icon:   Gavel,path: '/auctiondays'},
     {name: 'Trail Days', icon: Users, path: '/trialdayselection' },
     /* { name: 'Teams', icon: Users, path: '/teams' },
     { name: 'Results', icon: Trophy, path: '/results' },
@@ -209,18 +211,6 @@ const Header = () => {
               </span>
             </div>
 
-            {/* Notification Bell */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-blue-500/20 transition-all group"
-            >
-              <Bell className="w-4 h-4 md:w-5 md:h-5 text-blue-300 group-hover:text-white transition-colors" />
-              <span className="absolute -top-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-gradient-to-r from-red-500 to-pink-500 rounded-full text-[8px] md:text-[10px] flex items-center justify-center text-white font-bold">
-                3
-              </span>
-            </motion.button>
-
             {/* Press Conference Button - Mobile/Tablet */}
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -232,98 +222,7 @@ const Header = () => {
               <span className="hidden xs:inline">Press</span>
             </motion.button>
 
-            {/* User Menu */}
-            <div className="relative">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 md:gap-3 bg-gradient-to-r from-blue-600/20 to-purple-600/20 hover:from-blue-600/30 hover:to-purple-600/30 backdrop-blur-sm px-2 md:px-3 py-1.5 md:py-2 rounded-xl border border-blue-500/30 transition-all"
-              >
-                {/* User Avatar with Initials */}
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs md:text-sm shadow-lg">
-                  {getUserInitials()}
-                </div>
-                
-                {/* User Info - Hidden on mobile */}
-                <div className="hidden sm:block text-left">
-                  <p className="text-xs md:text-sm font-semibold text-white truncate max-w-[100px]">
-                    {user?.name || "User"}
-                  </p>
-                  <p className="text-[10px] md:text-xs text-blue-300/80 truncate max-w-[100px]">
-                    {user?.role || "Visitor"}
-                  </p>
-                </div>
-                
-                <ChevronDown className={`w-3 h-3 md:w-4 md:h-4 text-blue-300 transition-transform duration-300 ${showUserMenu ? 'rotate-180' : ''}`} />
-              </motion.button>
 
-              {/* Dropdown Menu */}
-              <AnimatePresence>
-                {showUserMenu && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-56 bg-slate-800/95 backdrop-blur-xl rounded-xl border border-blue-500/20 shadow-2xl overflow-hidden z-50"
-                  >
-                    {/* User Info Card */}
-                    <div className="p-3 border-b border-blue-500/20 bg-gradient-to-r from-blue-600/10 to-purple-600/10">
-                      <p className="text-sm font-semibold text-white">{user?.name || "Guest User"}</p>
-                      <p className="text-xs text-blue-300/80">{user?.email || "user@dpl.com"}</p>
-                    </div>
-                    
-                    {/* Menu Items */}
-                    <div className="p-2">
-                      <button 
-                        onClick={() => {
-                          navigate('/profile');
-                          setShowUserMenu(false);
-                        }}
-                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-all group"
-                      >
-                        <User className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
-                        <span>Profile Settings</span>
-                      </button>
-                      
-                      <button 
-                        onClick={() => {
-                          navigate('/press-conference');
-                          setShowUserMenu(false);
-                        }}
-                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-all group"
-                      >
-                        <Camera className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
-                        <span>Press Conference</span>
-                      </button>
-                      
-                      <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-all group">
-                        <HelpCircle className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
-                        <span>Help & Support</span>
-                      </button>
-                      
-                      <div className="border-t border-blue-500/20 my-2"></div>
-                      
-                      <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all group">
-                        <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                        <span>Sign Out</span>
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Settings Button */}
-            <motion.button 
-              whileHover={{ rotate: 90, scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 hover:from-blue-600/30 hover:to-purple-600/30 p-2 rounded-xl border border-blue-500/30 transition-all group"
-              onClick={() => dispatch(toggleSettingPopup())}
-            >
-              <Settings className="w-4 h-4 md:w-5 md:h-5 text-blue-300 group-hover:text-white transition-colors" />
-            </motion.button>
           </div>
         </div>
 
