@@ -78,8 +78,8 @@ const FrontPageDpl = () => {
         }
     }, [displayVideos.length, currentVideo]);
 
-    // Sponsors Images
-    const sponsors = [
+    // Teams Images
+    const Teams = [
         img1, img2, img3, img4,
         img5, img6, img7, img8,
         img9, img10, img11, img12,
@@ -407,36 +407,161 @@ const FrontPageDpl = () => {
                 </div>
             </section>
 
-            {/* Teams Carousel - Modern Card Grid */}
-            <section className="py-24 px-6 bg-white" data-animate="teams">
-                <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-12">
-                        <h2 className="text-4xl md:text-5xl font-black mb-4">
-                            <span className="bg-gradient-to-r from-amber-500 to-amber-400 bg-clip-text text-transparent">
-                                FEATURED TEAMS
+
+      
+
+            {/* Teams Section - Ultra Premium Design */}
+            <section className="relative py-32 px-6 overflow-hidden bg-slate-900">
+                {/* Animated Background Elements */}
+                <div className="absolute inset-0">
+                    {/* Gradient Orbs */}
+                    <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[120px] animate-pulse"></div>
+                    <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] animate-pulse delay-1000"></div>
+                    
+                    {/* Grid Pattern */}
+                    <div className="absolute inset-0 opacity-5" 
+                        style={{ 
+                            backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0)',
+                            backgroundSize: '40px 40px'
+                        }}>
+                    </div>
+                    
+                    {/* Floating Particles */}
+                    <div className="absolute top-20 left-20 w-2 h-2 bg-amber-400/30 rounded-full animate-float"></div>
+                    <div className="absolute bottom-40 right-40 w-3 h-3 bg-blue-400/30 rounded-full animate-float delay-700"></div>
+                    <div className="absolute top-60 right-60 w-2 h-2 bg-purple-400/30 rounded-full animate-float delay-1500"></div>
+                </div>
+
+                <div className="max-w-7xl mx-auto relative z-10">
+                    {/* Section Header - Premium */}
+                    <div className="text-center mb-20">
+                        {/* Badge */}
+                        <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-4 py-2 mb-6">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                            </span>
+                            <span className="text-amber-400 text-sm font-medium tracking-wider">PARTNERS & Teams</span>
+                        </div>
+                        
+                        {/* Main Heading */}
+                        <h2 className="text-5xl md:text-6xl font-black mb-4">
+                            <span className="bg-gradient-to-r from-amber-400 via-white to-amber-400 bg-clip-text text-transparent">
+                                OUR Teams
                             </span>
                         </h2>
-                        <p className="text-slate-500 text-lg">16 Teams battling for glory</p>
+                        
+                        {/* Decorative Line */}
+                        <div className="flex items-center justify-center gap-3 mb-6">
+                            <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+                            <i className="fa-solid fa-star text-amber-400 text-sm"></i>
+                            <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+                        </div>
+                        
+                        <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+                            Proudly supported by industry leaders who believe in the spirit of cricket
+                        </p>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {/* Main Slider Container */}
+                    <div className="relative">
+                        {/* Gradient Fades - Enhanced */}
+                        <div className="absolute left-0 top-0 w-48 h-full bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent z-20"></div>
+                        <div className="absolute right-0 top-0 w-48 h-full bg-gradient-to-l from-slate-900 via-slate-900/80 to-transparent z-20"></div>
+
+                        {/* Slider Track - Two Rows for Visual Interest */}
+                        <div className="space-y-8">
+                            
+                            {/* First Row - Moving Left */}
+                            <div className="flex gap-8 w-max sponsor-scroll-left hover:[animation-play-state:paused]">
+                                {[...Teams, ...Teams].map((logo, i) => (
+                                    <div
+                                        key={`row1-${i}`}
+                                        className="group relative flex items-center justify-center min-w-[320px] h-56"
+                                    >
+                                        {/* Card with Glow Effect */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 to-blue-400/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                        
+                                        {/* Main Card */}
+                                        <div className="relative w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden group-hover:border-amber-500/50 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2">
+                                            
+                                            {/* Inner Glow */}
+                                            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/0 via-amber-500/0 to-blue-500/0 group-hover:from-amber-500/10 group-hover:via-transparent group-hover:to-blue-500/10 transition-all duration-700"></div>
+                                            
+                                            {/* Logo Container */}
+                                            <div className="absolute inset-0 flex items-center justify-center p-4">
+                                                <img
+                                                    src={logo}
+                                                    alt={`Sponsor`}
+                                                    className="max-h-full max-w-full object-contain filter brightness-90 group-hover:brightness-110 transition-all duration-500"
+                                                />
+                                            </div>
+                                            
+                                            {/* Hover Overlay with Shine Effect */}
+                                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                                <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-shine"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Second Row - Moving Right (Opposite Direction) */}
+                            <div className="flex gap-8 w-max sponsor-scroll-right hover:[animation-play-state:paused]">
+                                {[...Teams, ...Teams].reverse().map((logo, i) => (
+                                    <div
+                                        key={`row2-${i}`}
+                                        className="group relative flex items-center justify-center min-w-[220px] h-40"
+                                    >
+                                        {/* Card with Glow Effect */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 to-blue-400/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                        
+                                        {/* Main Card */}
+                                        <div className="relative w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden group-hover:border-amber-500/50 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2">
+                                            
+                                            {/* Inner Glow */}
+                                            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/0 via-amber-500/0 to-blue-500/0 group-hover:from-amber-500/10 group-hover:via-transparent group-hover:to-blue-500/10 transition-all duration-700"></div>
+                                            
+                                            {/* Logo Container */}
+                                            <div className="absolute inset-0 flex items-center justify-center p-8">
+                                                <img
+                                                    src={logo}
+                                                    alt={`Sponsor`}
+                                                    className="max-h-full max-w-full object-contain filter brightness-90 group-hover:brightness-110 transition-all duration-500"
+                                                />
+                                            </div>
+                                            
+                                            {/* Hover Overlay with Shine Effect */}
+                                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                                <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-shine"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Scroll Indicators */}
+                        <div className="flex justify-center gap-3 mt-12">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
+                                <span className="text-slate-500 text-sm">Scrolling</span>
+                            </div>
+                            <i className="fa-solid fa-arrow-left text-slate-600"></i>
+                            <i className="fa-solid fa-arrow-right text-slate-600"></i>
+                        </div>
+                    </div>
+
+                    {/* Trust Badges */}
+                    <div className="flex flex-wrap justify-center gap-8 mt-20">
                         {[
-                            { name: 'Mumbai Strikers', captain: 'Rohit S.', color: 'from-blue-500 to-blue-600', icon: '⚡', bg: 'bg-blue-50' },
-                            { name: 'Pune Warriors', captain: 'Virat K.', color: 'from-red-500 to-red-600', icon: '🛡️', bg: 'bg-red-50' },
-                            { name: 'Delhi Kings', captain: 'Rishabh P.', color: 'from-purple-500 to-purple-600', icon: '👑', bg: 'bg-purple-50' },
-                            { name: 'Chennai Smashers', captain: 'MS Dhoni', color: 'from-yellow-500 to-yellow-600', icon: '🔥', bg: 'bg-yellow-50' },
-                            { name: 'Kolkata Tigers', captain: 'Andre R.', color: 'from-orange-500 to-orange-600', icon: '🐯', bg: 'bg-orange-50' },
-                            { name: 'Bangalore Bulls', captain: 'Faf D.', color: 'from-red-600 to-red-700', icon: '🐂', bg: 'bg-red-50' },
-                            { name: 'Lucknow Lions', captain: 'KL Rahul', color: 'from-cyan-500 to-cyan-600', icon: '🦁', bg: 'bg-cyan-50' },
-                            { name: 'Hyderabad Hawks', captain: 'Pat C.', color: 'from-orange-600 to-orange-700', icon: '🦅', bg: 'bg-orange-50' },
-                        ].map((team, i) => (
-                            <div key={i} className="group relative">
-                                <div className={`absolute inset-0 bg-gradient-to-br ${team.color} rounded-xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity`}></div>
-                                <div className={`relative ${team.bg} rounded-xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-100`}>
-                                    <div className="text-3xl mb-3">{team.icon}</div>
-                                    <h3 className="font-bold text-base text-slate-800">{team.name}</h3>
-                                    <p className="text-xs text-slate-500">Captain: {team.captain}</p>
-                                </div>
+                            { icon: 'fa-solid fa-medal', text: 'Official Partners' },
+                            { icon: 'fa-solid fa-handshake', text: '100+ Brands' },
+                            { icon: 'fa-solid fa-globe', text: 'Global Presence' },
+                        ].map((item, i) => (
+                            <div key={i} className="flex items-center gap-3 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-full border border-white/10">
+                                <i className={`${item.icon} text-amber-400 text-sm`}></i>
+                                <span className="text-slate-300 text-sm font-medium">{item.text}</span>
                             </div>
                         ))}
                     </div>
@@ -469,7 +594,7 @@ const FrontPageDpl = () => {
                                 <i className="fa-solid fa-trophy text-3xl text-white"></i>
                             </div>
                             <h3 className="text-xl font-bold text-slate-800 mb-2">WINNER</h3>
-                            <div className="text-3xl font-black text-slate-900 mb-2">₹50,000</div>
+                            <div className="text-3xl font-black text-slate-900 mb-2">₹400000</div>
                             <p className="text-slate-500 text-sm">+ Trophy & Gold Medals</p>
                         </div>
 
@@ -479,7 +604,7 @@ const FrontPageDpl = () => {
                                 <i className="fa-solid fa-medal text-3xl text-white"></i>
                             </div>
                             <h3 className="text-xl font-bold text-slate-800 mb-2">RUNNER UP</h3>
-                            <div className="text-3xl font-black text-slate-900 mb-2">₹25,000</div>
+                            <div className="text-3xl font-black text-slate-900 mb-2">₹200000</div>
                             <p className="text-slate-500 text-sm">+ Trophy & Silver Medals</p>
                         </div>
 
@@ -631,158 +756,39 @@ const FrontPageDpl = () => {
                 </div>
             </section>
 
-            {/* Sponsors Section - Ultra Premium Design */}
-            <section className="relative py-32 px-6 overflow-hidden bg-slate-900">
-                {/* Animated Background Elements */}
-                <div className="absolute inset-0">
-                    {/* Gradient Orbs */}
-                    <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[120px] animate-pulse"></div>
-                    <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] animate-pulse delay-1000"></div>
-                    
-                    {/* Grid Pattern */}
-                    <div className="absolute inset-0 opacity-5" 
-                        style={{ 
-                            backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0)',
-                            backgroundSize: '40px 40px'
-                        }}>
-                    </div>
-                    
-                    {/* Floating Particles */}
-                    <div className="absolute top-20 left-20 w-2 h-2 bg-amber-400/30 rounded-full animate-float"></div>
-                    <div className="absolute bottom-40 right-40 w-3 h-3 bg-blue-400/30 rounded-full animate-float delay-700"></div>
-                    <div className="absolute top-60 right-60 w-2 h-2 bg-purple-400/30 rounded-full animate-float delay-1500"></div>
-                </div>
+          
 
-                <div className="max-w-7xl mx-auto relative z-10">
-                    {/* Section Header - Premium */}
-                    <div className="text-center mb-20">
-                        {/* Badge */}
-                        <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-4 py-2 mb-6">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                            </span>
-                            <span className="text-amber-400 text-sm font-medium tracking-wider">PARTNERS & SPONSORS</span>
-                        </div>
-                        
-                        {/* Main Heading */}
-                        <h2 className="text-5xl md:text-6xl font-black mb-4">
-                            <span className="bg-gradient-to-r from-amber-400 via-white to-amber-400 bg-clip-text text-transparent">
-                                OUR SPONSORS
+
+              {/* Teams Carousel - Modern Card Grid */}
+            <section className="py-24 px-6 bg-white" data-animate="teams">
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center mb-12">
+                        <h2 className="text-4xl md:text-5xl font-black mb-4">
+                            <span className="bg-gradient-to-r from-amber-500 to-amber-400 bg-clip-text text-transparent">
+                                FEATURED TEAMS
                             </span>
                         </h2>
-                        
-                        {/* Decorative Line */}
-                        <div className="flex items-center justify-center gap-3 mb-6">
-                            <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
-                            <i className="fa-solid fa-star text-amber-400 text-sm"></i>
-                            <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
-                        </div>
-                        
-                        <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-                            Proudly supported by industry leaders who believe in the spirit of cricket
-                        </p>
+                        <p className="text-slate-500 text-lg">16 Teams battling for glory</p>
                     </div>
 
-                    {/* Main Slider Container */}
-                    <div className="relative">
-                        {/* Gradient Fades - Enhanced */}
-                        <div className="absolute left-0 top-0 w-48 h-full bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent z-20"></div>
-                        <div className="absolute right-0 top-0 w-48 h-full bg-gradient-to-l from-slate-900 via-slate-900/80 to-transparent z-20"></div>
-
-                        {/* Slider Track - Two Rows for Visual Interest */}
-                        <div className="space-y-8">
-                            
-                            {/* First Row - Moving Left */}
-                            <div className="flex gap-8 w-max sponsor-scroll-left hover:[animation-play-state:paused]">
-                                {[...sponsors, ...sponsors].map((logo, i) => (
-                                    <div
-                                        key={`row1-${i}`}
-                                        className="group relative flex items-center justify-center min-w-[320px] h-56"
-                                    >
-                                        {/* Card with Glow Effect */}
-                                        <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 to-blue-400/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                        
-                                        {/* Main Card */}
-                                        <div className="relative w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden group-hover:border-amber-500/50 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2">
-                                            
-                                            {/* Inner Glow */}
-                                            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/0 via-amber-500/0 to-blue-500/0 group-hover:from-amber-500/10 group-hover:via-transparent group-hover:to-blue-500/10 transition-all duration-700"></div>
-                                            
-                                            {/* Logo Container */}
-                                            <div className="absolute inset-0 flex items-center justify-center p-4">
-                                                <img
-                                                    src={logo}
-                                                    alt={`Sponsor`}
-                                                    className="max-h-full max-w-full object-contain filter brightness-90 group-hover:brightness-110 transition-all duration-500"
-                                                />
-                                            </div>
-                                            
-                                            {/* Hover Overlay with Shine Effect */}
-                                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                                <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-shine"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Second Row - Moving Right (Opposite Direction) */}
-                            <div className="flex gap-8 w-max sponsor-scroll-right hover:[animation-play-state:paused]">
-                                {[...sponsors, ...sponsors].reverse().map((logo, i) => (
-                                    <div
-                                        key={`row2-${i}`}
-                                        className="group relative flex items-center justify-center min-w-[220px] h-40"
-                                    >
-                                        {/* Card with Glow Effect */}
-                                        <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 to-blue-400/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                        
-                                        {/* Main Card */}
-                                        <div className="relative w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden group-hover:border-amber-500/50 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2">
-                                            
-                                            {/* Inner Glow */}
-                                            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/0 via-amber-500/0 to-blue-500/0 group-hover:from-amber-500/10 group-hover:via-transparent group-hover:to-blue-500/10 transition-all duration-700"></div>
-                                            
-                                            {/* Logo Container */}
-                                            <div className="absolute inset-0 flex items-center justify-center p-8">
-                                                <img
-                                                    src={logo}
-                                                    alt={`Sponsor`}
-                                                    className="max-h-full max-w-full object-contain filter brightness-90 group-hover:brightness-110 transition-all duration-500"
-                                                />
-                                            </div>
-                                            
-                                            {/* Hover Overlay with Shine Effect */}
-                                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                                <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-shine"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Scroll Indicators */}
-                        <div className="flex justify-center gap-3 mt-12">
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
-                                <span className="text-slate-500 text-sm">Scrolling</span>
-                            </div>
-                            <i className="fa-solid fa-arrow-left text-slate-600"></i>
-                            <i className="fa-solid fa-arrow-right text-slate-600"></i>
-                        </div>
-                    </div>
-
-                    {/* Trust Badges */}
-                    <div className="flex flex-wrap justify-center gap-8 mt-20">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {[
-                            { icon: 'fa-solid fa-medal', text: 'Official Partners' },
-                            { icon: 'fa-solid fa-handshake', text: '100+ Brands' },
-                            { icon: 'fa-solid fa-globe', text: 'Global Presence' },
-                        ].map((item, i) => (
-                            <div key={i} className="flex items-center gap-3 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-full border border-white/10">
-                                <i className={`${item.icon} text-amber-400 text-sm`}></i>
-                                <span className="text-slate-300 text-sm font-medium">{item.text}</span>
+                            { name: 'Mumbai Strikers', captain: 'Rohit S.', color: 'from-blue-500 to-blue-600', icon: '⚡', bg: 'bg-blue-50' },
+                            { name: 'Pune Warriors', captain: 'Virat K.', color: 'from-red-500 to-red-600', icon: '🛡️', bg: 'bg-red-50' },
+                            { name: 'Delhi Kings', captain: 'Rishabh P.', color: 'from-purple-500 to-purple-600', icon: '👑', bg: 'bg-purple-50' },
+                            { name: 'Chennai Smashers', captain: 'MS Dhoni', color: 'from-yellow-500 to-yellow-600', icon: '🔥', bg: 'bg-yellow-50' },
+                            { name: 'Kolkata Tigers', captain: 'Andre R.', color: 'from-orange-500 to-orange-600', icon: '🐯', bg: 'bg-orange-50' },
+                            { name: 'Bangalore Bulls', captain: 'Faf D.', color: 'from-red-600 to-red-700', icon: '🐂', bg: 'bg-red-50' },
+                            { name: 'Lucknow Lions', captain: 'KL Rahul', color: 'from-cyan-500 to-cyan-600', icon: '🦁', bg: 'bg-cyan-50' },
+                            { name: 'Hyderabad Hawks', captain: 'Pat C.', color: 'from-orange-600 to-orange-700', icon: '🦅', bg: 'bg-orange-50' },
+                        ].map((team, i) => (
+                            <div key={i} className="group relative">
+                                <div className={`absolute inset-0 bg-gradient-to-br ${team.color} rounded-xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity`}></div>
+                                <div className={`relative ${team.bg} rounded-xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-100`}>
+                                    <div className="text-3xl mb-3">{team.icon}</div>
+                                    <h3 className="font-bold text-base text-slate-800">{team.name}</h3>
+                                    <p className="text-xs text-slate-500">Captain: {team.captain}</p>
+                                </div>
                             </div>
                         ))}
                     </div>
