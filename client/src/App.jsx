@@ -10,6 +10,21 @@ import { ToastContainer } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "./store/slices/authSlice";
 import FrontPageDpl from "./pages/FrontPageDpl";
+import PressConferencePage from "./pages/PressConference";
+import Header from "./layout/Header"; // Import Header
+import VideoDetailPage from "./pages/VideoDetailPage";
+
+// Layout component to wrap pages with Header
+const PageLayout = ({ children }) => {
+  return (
+    <>
+      <Header />
+      <main className="pt-16 md:pt-[72px] min-h-screen bg-gray-50">
+        {children}
+      </main>
+    </>
+  );
+};
 
 const App = () => {
   const { user, isAuthenticated } = useSelector(state => state.auth);
@@ -17,33 +32,55 @@ const App = () => {
 
   useEffect(() => {
     dispatch(getUser());
-  }, [dispatch]); // Run only once on mount
+  }, [dispatch]);
 
   useEffect(() => {
     if (isAuthenticated && user?.role === "Admin") {
-      console.log("Admin detected, fetching data..."); // Debug log
-      // dispatch(fetchAllUsers());
-      // dispatch(fetchAllBooks());
-      // dispatch(fetchUserBorrowedBooks());
+      console.log("Admin detected, fetching data...");
     }
   }, [isAuthenticated, user, dispatch]);
 
-  console.log("App - User:", user); // Debug log
-  console.log("App - isAuthenticated:", isAuthenticated); // Debug log
+  console.log("App - User:", user);
+  console.log("App - isAuthenticated:", isAuthenticated);
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<FrontPageDpl />} />
+        {/* Public pages with Header */}
+        <Route path="/" element={
+          <PageLayout>
+            <FrontPageDpl />
+          </PageLayout>
+        } />
+        <Route path="/press-conference" element={
+          <PageLayout>
+            <PressConferencePage />
+          </PageLayout>
+        } />
+        <Route path="/videos" element={
+          <PageLayout>
+            <VideoDetailPage />
+          </PageLayout>
+        } />
+        
+        {/* Auth pages without Header (clean layout) */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/password/forgot" element={<ForgotPassword />} />
         <Route path="/otp-verification/:email" element={<OTP />} />
         <Route path="/password/reset/:token" element={<ResetPassword />} />
         
-        {/* Protected Home Route - Add this */}
-        <Route path="/home" element={<Home />} />
-        <Route path="/dashboard" element={<Home />} />
+        {/* Protected Home Route with Header */}
+        <Route path="/home" element={
+          <PageLayout>
+            <Home />
+          </PageLayout>
+        } />
+        <Route path="/dashboard" element={
+          <PageLayout>
+            <Home />
+          </PageLayout>
+        } />
       </Routes>
       <ToastContainer theme="dark" />
     </Router>
