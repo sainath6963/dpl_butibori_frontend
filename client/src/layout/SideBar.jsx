@@ -3,10 +3,7 @@ import logo_with_title from "../assets/logo-with-title.png";
 import logoutIcon from "../assets/logout.png";
 import closeIcon from "../assets/white-close-icon.png";
 import dashboardIcon from "../assets/element.png";
-import bookIcon from "../assets/book.png";
-import catalogIcon from "../assets/catalog.png";
 import settingIcon from "../assets/setting-white.png";
-import usersIcon from "../assets/people.png";
 import { RiAdminFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, resetAuthSlice } from "../store/slices/authSlice";
@@ -76,21 +73,21 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
           {isAuthenticated && user?.role === "Admin" && (
             <>
 
-             <button
+             {/* <button
             onClick={() => setSelectedComponent("Books")}
             className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-800/50 transition"
           >
             <img src={bookIcon} alt="books" className="w-5" />
             <span className="text-sm font-medium">Books</span>
-          </button>
+          </button> */}
           
-              <button
+              {/* <button
                 onClick={() => setSelectedComponent("catalog")}
                 className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-800/50 transition"
               >
                 <img src={catalogIcon} alt="catalog" className="w-5" />
                 <span className="text-sm font-medium">Catalog</span>
-              </button>
+              </button> */}
 
               <button
                 className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-800/50 transition"
@@ -100,13 +97,13 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
                 <span>Add new Admin</span>
               </button>
 
-              <button
+              {/* <button
                 onClick={() => setSelectedComponent("Users")}
                 className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-800/50 transition"
               >
                 <img src={usersIcon} alt="users" className="w-5" />
                 <span className="text-sm font-medium">Users</span>
-              </button>
+              </button> */}
             </>
           )}
 
