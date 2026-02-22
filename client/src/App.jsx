@@ -12,7 +12,7 @@ import { getUser } from "./store/slices/authSlice";
 import { fetchAllUsers } from "./store/slices/userSlice";
 import { fetchAllBooks } from "./store/slices/bookSlice";
 import { fetchUserBorrowedBooks } from "./store/slices/borrowSlice";
-import FrontPageDpl from "./pages/frontpagedpl";
+import FrontPageDpl from "./pages/FrontPageDpl";
 
 const App = () => {
   const { user, isAuthenticated } = useSelector(state => state.auth);
