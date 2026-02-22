@@ -88,6 +88,7 @@ const Header = () => {
     {name: 'Auction Days', icon: Camera,path: '/auctiondays', highlight: true},
     {name: 'Trail Days', icon: Users, path: '/trialdayselection' },
     { name: 'Day 1', icon: Calendar, path: '/dayone' },
+    { name: 'Day 2', icon: Calendar, path: '/daytwo' },
     /* { name: 'Teams', icon: Users, path: '/teams' },
     { name: 'Results', icon: Trophy, path: '/results' },
     { name: 'Contact', icon: Phone, path: '/contact' }, */

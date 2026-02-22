@@ -16,6 +16,7 @@ import Header from "./layout/Header"; // Import Header
 import VideoDetailPage from "./pages/VideoDetailPage";
 import TrialDaySelection from "./pages/TrialDaySelection";
 import DayOne from "./pages/DayOne";
+import DayTwo from "./pages/DayTwo";
 
 // Layout component to wrap pages with Header
 const PageLayout = ({ children }) => {
@@ -30,7 +31,7 @@ const PageLayout = ({ children }) => {
 };
 
 const App = () => {
-  const { user, isAuthenticated } = useSelector(state => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -50,57 +51,87 @@ const App = () => {
     <Router>
       <Routes>
         {/* Public pages with Header */}
-        <Route path="/" element={
-          <PageLayout>
-            <FrontPageDpl />
-          </PageLayout>
-        } />
-        <Route path="/press-conference" element={
-          <PageLayout>
-            <PressConferencePage />
-          
-        </PageLayout>
-        } />
-        <Route path="/auctiondays" element={
-          <PageLayout>
-            <AuctionDaysPage />     
-          </PageLayout>
-        } />
-        <Route path="/trialdayselection" element={
-          <PageLayout>
-            <TrialDaySelection />     
-          </PageLayout>
-        } />
-        <Route path="/videos" element={
-          <PageLayout>
-            <VideoDetailPage />
-          </PageLayout>
-        } />
-        <Route path="/dayone" element={
-          <PageLayout>
-            <DayOne />
-          </PageLayout>
-        } />
+        <Route
+          path="/"
+          element={
+            <PageLayout>
+              <FrontPageDpl />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/press-conference"
+          element={
+            <PageLayout>
+              <PressConferencePage />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/auctiondays"
+          element={
+            <PageLayout>
+              <AuctionDaysPage />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/trialdayselection"
+          element={
+            <PageLayout>
+              <TrialDaySelection />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/videos"
+          element={
+            <PageLayout>
+              <VideoDetailPage />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/dayone"
+          element={
+            <PageLayout>
+              <DayOne />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/daytwo"
+          element={
+            <PageLayout>
+              <DayTwo />
+            </PageLayout>
+          }
+        />
 
-        
         {/* Auth pages without Header (clean layout) */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/password/forgot" element={<ForgotPassword />} />
         <Route path="/otp-verification/:email" element={<OTP />} />
         <Route path="/password/reset/:token" element={<ResetPassword />} />
-        
+
         {/* Protected Home Route with Header */}
-        <Route path="/home" element={
-          <PageLayout>
-            <Home />
-          </PageLayout>
-        } />
-        <Route path="/dashboard" element={
-          <PageLayout>
-            <Home />
-          </PageLayout>
-        } />
+        <Route
+          path="/home"
+          element={
+            <PageLayout>
+              <Home />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <PageLayout>
+              <Home />
+            </PageLayout>
+          }
+        />
       </Routes>
       <ToastContainer theme="dark" />
     </Router>
