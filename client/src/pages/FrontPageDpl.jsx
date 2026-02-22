@@ -960,6 +960,8 @@ import { toggleRegisterPopup } from "../store/slices/popUpSlice";
 import { getAllVideos } from "../store/slices/videoSlice";
 import PlayerRegistrationPopup from "../popups/PlayerRegistrationPopup";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/dpl-logo.jpeg";
+
 
 
 import img1 from "../assets/1.jpg.jpeg";

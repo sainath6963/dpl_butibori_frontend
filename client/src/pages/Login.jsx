@@ -358,7 +358,7 @@ const Login = () => {
   }, [dispatch, error, message]);
 
   // Redirect to dashboard when authenticated
-  useEffect(() => {
+    useEffect(() => {
     if (isAuthenticated) {
       console.log("Login successful - Redirecting to dashboard");
       console.log("User role:", user?.role);
@@ -374,7 +374,6 @@ const Login = () => {
   if (isAuthenticated) {
     return <Navigate to="/home" replace />;
   }
-
   return (
     <div className="min-h-screen w-full flex bg-gradient-to-br from-[#F8FAFC] to-white">
       {/* Left Section - Cricket Themed */}

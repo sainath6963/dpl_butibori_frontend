@@ -29,7 +29,7 @@ const Home = () => {
 
     switch (selectedComponent) {
       case "Dashboard":
-        return user?.role === "Admin" ? (
+        return user?.role === "admin" ? (
           <AdminDashboard />
         ) : (
           <UserDashboard />
@@ -45,7 +45,7 @@ const Home = () => {
       //   return null;
 
       case "Users":
-        if (user?.role === "Admin") {
+        if (user?.role === "admin") {
           return <Users />;
         }
         return null;
@@ -54,7 +54,7 @@ const Home = () => {
       //   return <MyBorrowedBooks />;
 
       default:
-        return user?.role === "Admin" ? (
+        return user?.role === "admin" ? (
           <AdminDashboard />
         ) : (
           <UserDashboard />

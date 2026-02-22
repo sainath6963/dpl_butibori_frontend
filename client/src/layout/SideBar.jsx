@@ -70,7 +70,7 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
 
          
 
-          {isAuthenticated && user?.role === "Admin" && (
+          {isAuthenticated && user?.role === "admin" && (
             <>
 
              {/* <button
