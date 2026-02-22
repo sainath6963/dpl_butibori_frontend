@@ -85,9 +85,11 @@ const Header = () => {
     { name: 'Home', icon: Home, path: '/' },
     { name: 'Videos', icon: Video, path: '/videos' },
     { name: 'Press Conference', icon: Camera, path: '/press-conference', highlight: true },
-    { name: 'Teams', icon: Users, path: '/teams' },
+    {name: 'Auction Days', icon: Camera,path: '/auctiondays', highlight: true},
+    {name: 'Trail Days', icon: Users, path: '/trialdayselection' },
+    /* { name: 'Teams', icon: Users, path: '/teams' },
     { name: 'Results', icon: Trophy, path: '/results' },
-    { name: 'Contact', icon: Phone, path: '/contact' },
+    { name: 'Contact', icon: Phone, path: '/contact' }, */
   ];
 
   // Check if a path is active

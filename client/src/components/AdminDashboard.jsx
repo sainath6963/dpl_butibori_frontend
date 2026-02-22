@@ -21,7 +21,7 @@ const AdminDashboard = () => {
 
   // Fetch videos on component mount
   useEffect(() => {
-    dispatch(getAllVideos());
+    dispatch(getAllVideos()); 
   }, [dispatch]);
 
   // Show success/error messages

@@ -11,7 +11,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "./store/slices/authSlice";
 import FrontPageDpl from "./pages/FrontPageDpl";
 import PressConferencePage from "./pages/PressConference";
+import AuctionDaysPage from "./pages/AuctionDays";
 import Header from "./layout/Header"; // Import Header
+import TrialDaySelection from "./pages/TrialDaySelection";
 
 // Layout component to wrap pages with Header
 const PageLayout = ({ children }) => {
@@ -54,8 +56,20 @@ const App = () => {
         <Route path="/press-conference" element={
           <PageLayout>
             <PressConferencePage />
+          
+        </PageLayout>
+        } />
+        <Route path="/auctiondays" element={
+          <PageLayout>
+            <AuctionDaysPage />     
           </PageLayout>
         } />
+        <Route path="/trialdayselection" element={
+          <PageLayout>
+            <TrialDaySelection />     
+          </PageLayout>
+        } />
+
         
         {/* Auth pages without Header (clean layout) */}
         <Route path="/login" element={<Login />} />
