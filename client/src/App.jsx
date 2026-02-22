@@ -12,6 +12,7 @@ import { getUser } from "./store/slices/authSlice";
 import FrontPageDpl from "./pages/FrontPageDpl";
 import PressConferencePage from "./pages/PressConference";
 import Header from "./layout/Header"; // Import Header
+import VideoDetailPage from "./pages/VideoDetailPage";
 
 // Layout component to wrap pages with Header
 const PageLayout = ({ children }) => {
@@ -54,6 +55,11 @@ const App = () => {
         <Route path="/press-conference" element={
           <PageLayout>
             <PressConferencePage />
+          </PageLayout>
+        } />
+        <Route path="/videos" element={
+          <PageLayout>
+            <VideoDetailPage />
           </PageLayout>
         } />
         
