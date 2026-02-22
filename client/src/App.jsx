@@ -15,6 +15,7 @@ import AuctionDaysPage from "./pages/AuctionDays";
 import Header from "./layout/Header"; // Import Header
 import VideoDetailPage from "./pages/VideoDetailPage";
 import TrialDaySelection from "./pages/TrialDaySelection";
+import DayOne from "./pages/DayOne";
 
 // Layout component to wrap pages with Header
 const PageLayout = ({ children }) => {
@@ -73,6 +74,11 @@ const App = () => {
         <Route path="/videos" element={
           <PageLayout>
             <VideoDetailPage />
+          </PageLayout>
+        } />
+        <Route path="/dayone" element={
+          <PageLayout>
+            <DayOne />
           </PageLayout>
         } />
 
