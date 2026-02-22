@@ -13,7 +13,7 @@ export const store = configureStore({
         popup:popupReduser,
         user:userReducer,
         videos: videoReducer,
-        player: playerReducer,
+        players: playerReducer,
         payment: paymentReducer,
     },
     

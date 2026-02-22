@@ -141,14 +141,25 @@ export const getAllPlayers = createAsyncThunk(
   'players/getAll',
   async (_, { rejectWithValue, getState }) => {
     try {
+      // You can still check if user is authenticated, but don't add token to headers
       const { auth } = getState();
+      
+      // Optional: Check if user is authenticated
+      if (!auth.isAuthenticated) {
+        return rejectWithValue('Please login to view players');
+      }
 
+      // No Authorization header needed - cookies will be sent automatically
       const config = {
+        withCredentials: true, // Important: This ensures cookies are sent
         headers: {
-          Authorization: `Bearer ${auth.token}`,
+          // Don't add Authorization header
+          'Content-Type': 'application/json',
         },
       };
 
+      console.log('Making request with cookies');
+      
       const { data } = await axios.get(
         `${API}/api/v1/players/admin/all`,
         config
@@ -156,6 +167,15 @@ export const getAllPlayers = createAsyncThunk(
 
       return data;
     } catch (error) {
+      console.error('API Error:', {
+        status: error.response?.status,
+        message: error.response?.data?.message,
+      });
+
+      if (error.response?.status === 401) {
+        toast.error('Session expired. Please login again.');
+      }
+      
       const errorMessage = handleApiError(error);
       toast.error(errorMessage);
       return rejectWithValue(errorMessage);

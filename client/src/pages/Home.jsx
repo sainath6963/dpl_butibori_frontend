@@ -8,6 +8,7 @@ import AdminDashboard from "../components/AdminDashboard";
 // import BookManagement from "../components/BookManagement";
 // import Catalog from "../components/Catalog";
 import Users from "../components/Users";
+import Players from "../components/players"
 // import MyBorrowedBooks from "../components/MyBorrowedBooks";
 
 const Home = () => {
@@ -44,6 +45,11 @@ const Home = () => {
       //   }
       //   return null;
 
+       case "Players":
+        if (user?.role === "admin") {
+          return <Players />;
+        }
+        return null;
       case "Users":
         if (user?.role === "admin") {
           return <Users />;

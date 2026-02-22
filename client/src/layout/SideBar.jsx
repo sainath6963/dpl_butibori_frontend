@@ -8,6 +8,7 @@ import { RiAdminFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, resetAuthSlice } from "../store/slices/authSlice";
 import { toast } from "react-toastify";
+import { FaUsers } from "react-icons/fa";
 import {
   toggleAddNewAdminPopup,
   toggleSettingPopup,
@@ -72,22 +73,19 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
 
           {isAuthenticated && user?.role === "admin" && (
             <>
-
-             {/* <button
-            onClick={() => setSelectedComponent("Books")}
-            className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-800/50 transition"
-          >
-            <img src={bookIcon} alt="books" className="w-5" />
-            <span className="text-sm font-medium">Books</span>
-          </button> */}
-          
-              {/* <button
-                onClick={() => setSelectedComponent("catalog")}
+              {/* Players List Button - NEW */}
+              <button
                 className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-800/50 transition"
+                onClick={() => {
+                  setSelectedComponent("Players");
+                  setIsSideBarOpen(false); // Close sidebar on mobile after selection
+                }}
               >
-                <img src={catalogIcon} alt="catalog" className="w-5" />
-                <span className="text-sm font-medium">Catalog</span>
-              </button> */}
+                <FaUsers className="w-5 h-5" />
+                <span className="text-sm font-medium">Players List</span>
+              </button>
+
+             
 
               <button
                 className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-800/50 transition"
@@ -97,30 +95,11 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
                 <span>Add new Admin</span>
               </button>
 
-              {/* <button
-                onClick={() => setSelectedComponent("Users")}
-                className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-800/50 transition"
-              >
-                <img src={usersIcon} alt="users" className="w-5" />
-                <span className="text-sm font-medium">Users</span>
-              </button> */}
+             
             </>
           )}
 
-          {/* {isAuthenticated && user?.role === "User" && (
-            <>
-              <button
-                onClick={() => {
-                  dispatch(fetchUserBorrowedBooks()); 
-                  setSelectedComponent("MyBorrowedBooks");
-                }}
-                className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-800/50 transition"
-              >
-                <img src={catalogIcon} alt="MyBorrowedBooks" className="w-5" />
-                <span className="text-sm font-medium">My Books</span>
-              </button>
-            </>
-          )} */}
+        
 
           <button
             onClick={() => dispatch(toggleSettingPopup())}
