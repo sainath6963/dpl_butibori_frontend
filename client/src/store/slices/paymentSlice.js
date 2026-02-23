@@ -60,6 +60,80 @@ export const verifyPayment = createAsyncThunk(
   }
 );
 
+
+// ================= GET USER PAYMENTS =================
+export const getUserPayments = createAsyncThunk(
+  "payment/myPayments",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(
+        `${API}/api/v1/payments/my-payments`,
+        { withCredentials: true }
+      );
+      return data.payments;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
+
+// ================= GET PAYMENT STATUS =================
+export const getPaymentStatus = createAsyncThunk(
+  "payment/status",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(
+        `${API}/api/v1/payments/status/${id}`,
+        { withCredentials: true }
+      );
+      return data.payment;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
+
+// ================= ADMIN: GET ALL PAYMENTS =================
+export const getAllPayments = createAsyncThunk(
+  "payment/getAll",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(
+        `${API}/api/v1/payments/admin/all`,
+        { withCredentials: true }
+      );
+      return data.payments;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
+
+// ================= ADMIN: PROCESS REFUND =================
+export const processRefund = createAsyncThunk(
+  "payment/refund",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(
+        `${API}/api/v1/payments/admin/refund/${id}`,
+        {},
+        { withCredentials: true }
+      );
+      toast.success("Refund Processed Successfully");
+      return data;
+    } catch (error) {
+      const message = error.response?.data?.message || "Refund failed";
+      toast.error(message);
+      return rejectWithValue(message);
+    }
+  }
+);
+
+
+
+
+
+
 // ================= SLICE =================
 const paymentSlice = createSlice({
   name: "payment",
@@ -106,7 +180,18 @@ const paymentSlice = createSlice({
       .addCase(verifyPayment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+  // User Payments
+      .addCase(getUserPayments.fulfilled, (state, action) => {
+        state.payments = action.payload;
+      })
+
+      // Admin All Payments
+      .addCase(getAllPayments.fulfilled, (state, action) => {
+        state.payments = action.payload;
       });
+
+      
   },
 });
 
