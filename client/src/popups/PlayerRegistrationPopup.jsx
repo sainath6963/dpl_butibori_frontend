@@ -36,7 +36,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const PlayerRegistrationPopup = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
-  const { loading, success, error } = useSelector((state) => state.player);
+  const { loading, success, error } = useSelector((state) => state.players);
   
   const [formData, setFormData] = useState({
     fullName: '',
