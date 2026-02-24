@@ -488,133 +488,88 @@ const FrontPageDpl = () => {
     </div>
 </section>
 
-            {/* Prize Pool */}
-            <section className="py-24 px-6 bg-[#F8FAFC]" data-animate="prize">
-                <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl md:text-5xl font-black mb-4">
-                            <span className="bg-gradient-to-r from-[#0A2472] to-[#1E293B] bg-clip-text text-transparent">
-                                PRIZE POOL
-                            </span>
-                        </h2>
-                        <p className="text-[#0A2472] text-lg">Total worth ₹4,00,000 + Trophies + Exciting Prizes</p>
-                    </div>
+           {/* Prize Pool */}
+<section className="py-24 px-6 bg-[#F8FAFC]" data-animate="prize">
+  <div className="max-w-6xl mx-auto">
 
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {/* Winner */}
-                        <div className="group relative bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-[#E2E8F0]">
-                            <div className="absolute -top-3 -right-3">
-                                <div className="relative">
-                                    <div className="w-12 h-12 bg-[#0A2472] rounded-xl flex items-center justify-center shadow-lg">
-                                        <i className="fa-solid fa-crown text-white text-xl"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="w-20 h-20 mx-auto bg-[#0A2472] rounded-xl flex items-center justify-center mb-6 transform group-hover:rotate-6 transition-transform">
-                                <i className="fa-solid fa-trophy text-3xl text-white"></i>
-                            </div>
-                            <h3 className="text-xl font-bold text-[#0A2472] mb-2">WINNER</h3>
-                            <div className="text-3xl font-black text-[#0A2472] mb-2">₹4,00,000</div>
-                            <p className="text-[#1E293B] text-sm">+ Trophy & Gold Medals</p>
-                        </div>
+    {/* Heading */}
+    <div className="text-center mb-16">
+      <h2 className="text-4xl md:text-5xl font-black mb-4">
+        <span className="bg-gradient-to-r from-[#0A2472] to-[#1E293B] bg-clip-text text-transparent">
+          PRIZE POOL
+        </span>
+      </h2>
+      <p className="text-[#0A2472] text-lg">
+        Total worth ₹6,32,000 + Trophies + Exciting Prizes
+      </p>
+    </div>
 
-                        {/* Runner Up */}
-                        <div className="group relative bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-[#E2E8F0]">
-                            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#1E293B] to-[#0A2472] rounded-xl flex items-center justify-center mb-6 transform group-hover:rotate-6 transition-transform">
-                                <i className="fa-solid fa-medal text-3xl text-white"></i>
-                            </div>
-                            <h3 className="text-xl font-bold text-[#0A2472] mb-2">MAN OF SERIES</h3>
-                            <div className="text-3xl font-black text-[#0A2472] mb-2">₹21,000</div>
-                            <p className="text-[#1E293B] text-sm">+ Trophy & Silver Medals</p>
-                        </div>
+    {/* Top 4 Prize Cards */}
+    <div className="grid md:grid-cols-4 gap-6">
 
-                        {/* Man of Series */}
-                        <div className="group relative bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-[#E2E8F0]">
-                            <div className="w-20 h-20 mx-auto bg-[#94A3B8] rounded-xl flex items-center justify-center mb-6 transform group-hover:rotate-6 transition-transform">
-                                <i className="fa-solid fa-star text-3xl text-white"></i>
-                            </div>
-                            <h3 className="text-xl font-bold text-[#0A2472] mb-2">MAN OF THE MATCH</h3>
-                            <div className="text-3xl font-black text-[#0A2472] mb-2">₹11,000</div>
-                            <p className="text-[#1E293B] text-sm">+ Special Trophy & Award</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+      {/* Winner */}
+      <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl p-8 text-center shadow-xl text-white">
+        <div className="text-5xl mb-4">🥇</div>
+        <h3 className="text-xl font-bold mb-2">WINNER</h3>
+        <div className="text-3xl font-black">₹4,00,000</div>
+        <p className="text-sm mt-2">+ Trophy & Gold Medals</p>
+      </div>
 
-            {/* Live Match Preview */}
-            <section className="py-20 bg-gradient-to-br from-[#0A2472] to-[#1E293B] text-white relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-                    <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-                </div>
-                
-                <div className="relative z-10 max-w-6xl mx-auto px-6">
-                    <div className="text-center mb-10">
-                        <h2 className="text-3xl font-bold mb-2">LIVE MATCH PREVIEW</h2>
-                        <p className="text-blue-200">Today's marquee clash</p>
-                    </div>
+      {/* Runner Up */}
+      <div className="bg-gradient-to-br from-gray-300 to-gray-500 rounded-2xl p-8 text-center shadow-xl text-white">
+        <div className="text-5xl mb-4">🥈</div>
+        <h3 className="text-xl font-bold mb-2">RUNNER UP</h3>
+        <div className="text-3xl font-black">₹2,11,000</div>
+        <p className="text-sm mt-2">+ Trophy & Silver Medals</p>
+      </div>
 
-                    <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
-                        <div className="grid md:grid-cols-3 gap-8 items-center">
-                            {/* Team 1 */}
-                            <div className="text-center group">
-                                <div className="w-24 h-24 mx-auto bg-white rounded-2xl flex items-center justify-center mb-4 border-2 border-white/50 group-hover:scale-110 transition-transform">
-                                    <i className="fa-solid fa-shirt text-3xl text-[#0A2472]"></i>
-                                </div>
-                                <h3 className="font-bold text-xl">MUMBAI STRIKERS</h3>
-                                <p className="text-blue-200 text-sm mb-2">Captain: Rohit S.</p>
-                                <div className="inline-block bg-white/10 rounded-full px-3 py-1 text-xs">
-                                    <i className="fa-regular fa-chart-line mr-1 text-white"></i> W W L W
-                                </div>
-                            </div>
-                            
-                            {/* VS & Match Info */}
-                            <div className="text-center">
-                                <div className="text-4xl font-black text-white mb-4">VS</div>
-                                <div className="bg-white/10 rounded-xl py-3 px-6">
-                                    <p className="text-xs text-blue-200">Match 7 • Finals Week</p>
-                                    <p className="text-xl font-bold">7:30 PM</p>
-                                    <p className="text-xs text-blue-200">Shivaji Ground, Pune</p>
-                                </div>
-                                <div className="mt-4 flex justify-center gap-2">
-                                    <span className="relative flex h-2 w-2">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-                                    </span>
-                                    <span className="text-xs text-blue-200">Live on YouTube</span>
-                                </div>
-                            </div>
-                            
-                            {/* Team 2 */}
-                            <div className="text-center group">
-                                <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#1E293B] to-[#0A2472] rounded-2xl flex items-center justify-center mb-4 border-2 border-white/50 group-hover:scale-110 transition-transform">
-                                    <i className="fa-solid fa-shirt text-3xl text-white"></i>
-                                </div>
-                                <h3 className="font-bold text-xl">PUNE WARRIORS</h3>
-                                <p className="text-blue-200 text-sm mb-2">Captain: Virat K.</p>
-                                <div className="inline-block bg-white/10 rounded-full px-3 py-1 text-xs">
-                                    <i className="fa-regular fa-chart-line mr-1 text-white"></i> W W W L
-                                </div>
-                            </div>
-                        </div>
-                        
-                        {/* Match Stats Preview */}
-                        <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {[
-                                { label: 'Avg Score', value: '185' },
-                                { label: 'Top Scorer', value: 'Virat (450)' },
-                                { label: 'Best Bowling', value: 'Bumrah (15)' },
-                                { label: 'Head to Head', value: '5-3' },
-                            ].map((stat, i) => (
-                                <div key={i} className="bg-white/5 rounded-xl p-3 text-center">
-                                    <div className="text-xs text-blue-200">{stat.label}</div>
-                                    <div className="font-bold text-lg text-white">{stat.value}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
+      {/* Man of Series */}
+      <div className="bg-white rounded-2xl p-8 text-center shadow-lg border">
+        <div className="text-5xl mb-4">🏅</div>
+        <h3 className="text-xl font-bold text-[#0A2472] mb-2">
+          MAN OF SERIES
+        </h3>
+        <div className="text-3xl font-black text-[#0A2472]">
+          ₹21,000
+        </div>
+      </div>
+
+      {/* Man of Match */}
+      <div className="bg-white rounded-2xl p-8 text-center shadow-lg border">
+        <div className="text-5xl mb-4">⭐</div>
+        <h3 className="text-xl font-bold text-[#0A2472] mb-2">
+          MAN OF THE MATCH
+        </h3>
+        <div className="text-3xl font-black text-[#0A2472]">
+          ₹11,000
+        </div>
+      </div>
+
+    </div>
+
+    {/* Extra Prize Strips */}
+    <div className="mt-10 grid md:grid-cols-3 gap-4">
+
+      {[
+        "Bid Price",
+        "Best Player of Nagpur Rural",
+        "Best Player of Butibori",
+        "Other Exciting Prizes"
+      ].map((item, i) => (
+        <div
+          key={i}
+          className="bg-gradient-to-r from-red-600 to-red-500 text-white px-6 py-3 rounded-lg text-center font-semibold shadow-md"
+        >
+          • {item}
+        </div>
+      ))}
+
+    </div>
+
+  </div>
+</section>
+
+          
 
             {/* Season 1 Winners Section */}
             <section className="py-28 px-6 bg-gradient-to-b from-white to-[#F8FAFC]">
