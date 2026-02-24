@@ -666,7 +666,7 @@ const FrontPageDpl = () => {
                 </div>
             </section>
 
-            {/* Sponsors Section */}
+            {/* Sponsors Section
             <section className="relative py-32 px-6 overflow-hidden bg-[#0A2472]">
                 {/* Animated Background Elements */}
                 <div className="absolute inset-0">
@@ -822,7 +822,7 @@ const FrontPageDpl = () => {
                         ))}
                     </div>
                 </div>
-            </section>
+            {/* </section> */} 
 
             {/* CTA Section */}
             <section className="py-24 px-6 relative overflow-hidden bg-gradient-to-br from-[#0A2472] to-[#1E293B]">
