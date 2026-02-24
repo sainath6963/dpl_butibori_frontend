@@ -171,38 +171,48 @@ const FrontPageDpl = () => {
                 
 <div className="relative z-10 max-w-6xl mx-auto px-6" data-animate="hero">
   <div className="space-y-8">
-    {/* Tournament Begins Badge */}
-    <div className="flex justify-center">
-      <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2">
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-        </span>
-        <span className="text-white/90 text-sm font-medium tracking-wide">TOURNAMENT BEGINS IN 10 DAYS</span>
-      </div>
-    </div>
+   
 
-    {/* Logo and Title Side by Side */}
-    <div className="flex items-center justify-center gap-6">
-      {/* Small Logo */}
-      <img
-        src={logo}
-        alt="DPL Logo"
-        className="w-[100px] md:w-[120px] lg:w-[150px] object-contain"
-      />
-      
-      {/* Large Title */}
- <div className="text-left">
-    <h1 className="font-['Inter',_system-ui,_sans-serif] tracking-tight">
-      <span className="block text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-[-0.02em] 
-                     bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-        FLOOD LIGHT
-      </span>
-      <span className="block text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-[-0.02em] 
-                     bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-        CRICKET TOURNAMENT
-      </span>
+{/* Logo + Title Vertical Layout */}
+<div className="flex flex-col items-center justify-center text-center gap-4">
+
+  {/* Top Logo */}
+  <img
+    src={logo}
+    alt="DPL Logo"
+    className="w-[110px] md:w-[130px] lg:w-[160px] object-contain"
+  />
+
+  {/* Title Block */}
+  <div className="font-['Inter',_system-ui,_sans-serif] tracking-tight">
+
+    {/* Dinshaw's — Sponsor Focus */}
+    <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold 
+                   text-yellow-300 drop-shadow-[0_0_12px_rgba(253,224,71,0.8)]">
+      Dinshaw’s
+    </h2>
+
+    {/* Dream Premier League — MAIN TITLE */}
+    <h1 className="text-5xl md:text-6xl lg:text-7xl font-black 
+                   leading-[1.05] tracking-[-0.02em]
+                   bg-gradient-to-r from-white via-blue-200 to-blue-400 
+                   bg-clip-text text-transparent 
+                   drop-shadow-[0_0_18px_rgba(59,130,246,0.7)]">
+      Dream Premier League
     </h1>
+
+    {/* Butibori — Secondary */}
+    <h3 className="mt-2 text-xl md:text-2xl lg:text-3xl 
+                   text-white/80 font-semibold">
+      Butibori
+    </h3>
+
+    {/* Flood Light Cricket Tournament — Subtitle */}
+    <h2 className="text-2xl md:text-3xl lg:text-4xl 
+                   text-yellow-200 font-bold tracking-wide">
+      Flood Light Cricket Tournament
+    </h2>
+
   </div>
 </div>
 
@@ -293,7 +303,7 @@ const FrontPageDpl = () => {
   {/* Additional Prizes Tag */}
   <div className="mt-6 flex items-center gap-2 bg-white/10 backdrop-blur-sm px-5 py-2 rounded-full border border-white/20">
     <span className="text-yellow-400 text-sm">🏆</span>
-    <span className="text-white/90 text-sm">+ Man of the Series • Man of the Match • Best Player Awards</span>
+    <span className="text-white/90 text-sm">Registration Starts On 1st March 2026 to 10th April 2026</span>
     <span className="text-yellow-400 text-sm">🏆</span>
   </div>
 </div>
@@ -487,7 +497,7 @@ const FrontPageDpl = () => {
                                 PRIZE POOL
                             </span>
                         </h2>
-                        <p className="text-[#0A2472] text-lg">Total worth ₹1,00,000 + Trophies + Exciting Prizes</p>
+                        <p className="text-[#0A2472] text-lg">Total worth ₹4,00,000 + Trophies + Exciting Prizes</p>
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-6">
@@ -504,7 +514,7 @@ const FrontPageDpl = () => {
                                 <i className="fa-solid fa-trophy text-3xl text-white"></i>
                             </div>
                             <h3 className="text-xl font-bold text-[#0A2472] mb-2">WINNER</h3>
-                            <div className="text-3xl font-black text-[#0A2472] mb-2">₹50,000</div>
+                            <div className="text-3xl font-black text-[#0A2472] mb-2">₹4,00,000</div>
                             <p className="text-[#1E293B] text-sm">+ Trophy & Gold Medals</p>
                         </div>
 
@@ -513,8 +523,8 @@ const FrontPageDpl = () => {
                             <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#1E293B] to-[#0A2472] rounded-xl flex items-center justify-center mb-6 transform group-hover:rotate-6 transition-transform">
                                 <i className="fa-solid fa-medal text-3xl text-white"></i>
                             </div>
-                            <h3 className="text-xl font-bold text-[#0A2472] mb-2">RUNNER UP</h3>
-                            <div className="text-3xl font-black text-[#0A2472] mb-2">₹25,000</div>
+                            <h3 className="text-xl font-bold text-[#0A2472] mb-2">MAN OF SERIES</h3>
+                            <div className="text-3xl font-black text-[#0A2472] mb-2">₹21,000</div>
                             <p className="text-[#1E293B] text-sm">+ Trophy & Silver Medals</p>
                         </div>
 
@@ -523,8 +533,8 @@ const FrontPageDpl = () => {
                             <div className="w-20 h-20 mx-auto bg-[#94A3B8] rounded-xl flex items-center justify-center mb-6 transform group-hover:rotate-6 transition-transform">
                                 <i className="fa-solid fa-star text-3xl text-white"></i>
                             </div>
-                            <h3 className="text-xl font-bold text-[#0A2472] mb-2">MAN OF SERIES</h3>
-                            <div className="text-3xl font-black text-[#0A2472] mb-2">₹15,000</div>
+                            <h3 className="text-xl font-bold text-[#0A2472] mb-2">MAN OF THE MATCH</h3>
+                            <div className="text-3xl font-black text-[#0A2472] mb-2">₹11,000</div>
                             <p className="text-[#1E293B] text-sm">+ Special Trophy & Award</p>
                         </div>
                     </div>
@@ -713,7 +723,7 @@ const FrontPageDpl = () => {
                                 <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
                                     <i className="fa-solid fa-shirt text-[#0A2472] text-sm"></i>
                                 </div>
-                                <span className="font-bold text-lg">CCL 2026</span>
+                                <span className="font-bold text-lg">DPL BUTIBORI 2026</span>
                             </div>
                             <p className="text-blue-200 text-sm">Premium cricket tournament for champions. Live streaming on YouTube.</p>
                         </div>
@@ -733,15 +743,15 @@ const FrontPageDpl = () => {
                             <ul className="space-y-2 text-sm">
                                 <li className="flex items-center gap-2 text-blue-200">
                                     <i className="fa-solid fa-phone text-white text-xs"></i>
-                                    +91 98765 43210
+                                    8698108101
                                 </li>
                                 <li className="flex items-center gap-2 text-blue-200">
                                     <i className="fa-solid fa-envelope text-white text-xs"></i>
-                                    info@ccl2026.com
+                                    dplbutibori@gmail.com
                                 </li>
                                 <li className="flex items-center gap-2 text-blue-200">
                                     <i className="fa-solid fa-location-dot text-white text-xs"></i>
-                                    Pune, India
+                                HBL Tower, Main Road Butibori, Nagpur 441108
                                 </li>
                             </ul>
                         </div>
@@ -762,7 +772,7 @@ const FrontPageDpl = () => {
                     </div>
                     
                     <div className="border-t border-[#1E293B] pt-6 flex flex-wrap justify-between items-center text-blue-200 text-sm">
-                        <span>© 2026 Champions Cricket League. All rights reserved.</span>
+                        <span>© 2026 DPL BUTIBORI All rights reserved.</span>
                         <div className="flex gap-4 mt-2 md:mt-0">
                             <a href="#" className="hover:text-white transition">Privacy</a>
                             <a href="#" className="hover:text-white transition">Terms</a>
