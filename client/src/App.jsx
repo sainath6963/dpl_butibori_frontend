@@ -17,6 +17,7 @@ import VideoDetailPage from "./pages/VideoDetailPage";
 import TrialDaySelection from "./pages/TrialDaySelection";
 import DayOne from "./pages/DayOne";
 import DayTwo from "./pages/DayTwo";
+import ManagingDirector from "./pages/ManagingDirector";
 
 // Layout component to wrap pages with Header
 const PageLayout = ({ children }) => {
@@ -104,6 +105,14 @@ const App = () => {
           element={
             <PageLayout>
               <DayTwo />
+            </PageLayout>
+          }
+        />
+         <Route
+          path="/managing-director"
+          element={
+            <PageLayout>
+              <ManagingDirector />
             </PageLayout>
           }
         />

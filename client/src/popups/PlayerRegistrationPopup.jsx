@@ -72,7 +72,33 @@ const PlayerRegistrationPopup = ({ isOpen, onClose }) => {
   const [mosFields, setMosFields] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState({});
   const [activeTab, setActiveTab] = useState('basic');
+const tabs = [
+  { id: 'basic', label: 'Basic Info', icon: User },
+  { id: 'playing', label: 'Playing Details', icon: Shield },
+  { id: 'history', label: 'Tournament History', icon: Trophy },
+  { id: 'awards', label: 'Awards', icon: Award },
+  { id: 'documents', label: 'Documents', icon: FileText },
+];
 
+
+const [currentTabIndex, setCurrentTabIndex] = useState(0);
+
+ // Add these functions after your state declarations
+const goToNextTab = () => {
+  if (currentTabIndex < tabs.length - 1) {
+    const nextIndex = currentTabIndex + 1;
+    setCurrentTabIndex(nextIndex);
+    setActiveTab(tabs[nextIndex].id);
+  }
+};
+
+const goToPreviousTab = () => {
+  if (currentTabIndex > 0) {
+    const prevIndex = currentTabIndex - 1;
+    setCurrentTabIndex(prevIndex);
+    setActiveTab(tabs[prevIndex].id);
+  }
+};
   useEffect(() => {
     if (success) {
       toast.success('🎉 Registration successful!', {
@@ -138,7 +164,9 @@ const PlayerRegistrationPopup = ({ isOpen, onClose }) => {
     setMosFields([]);
     setSelectedFiles({});
     setActiveTab('basic');
+    setCurrentTabIndex(0);
   };
+ 
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -327,13 +355,7 @@ const PlayerRegistrationPopup = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const tabs = [
-    { id: 'basic', label: 'Basic Info', icon: User },
-    { id: 'playing', label: 'Playing Details', icon: Shield },
-    { id: 'history', label: 'Tournament History', icon: Trophy },
-    { id: 'awards', label: 'Awards', icon: Award },
-    { id: 'documents', label: 'Documents', icon: FileText },
-  ];
+
 
   return (
     <AnimatePresence>
@@ -380,23 +402,26 @@ const PlayerRegistrationPopup = ({ isOpen, onClose }) => {
                     </motion.button>
                   </div>
 
-                  {/* Progress Tabs */}
-                  <div className="flex gap-1 mt-6">
-                    {tabs.map((tab, index) => (
-                      <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`flex-1 py-3 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
-                          activeTab === tab.id
-                            ? 'bg-white text-indigo-600 shadow-lg'
-                            : 'text-indigo-100 hover:bg-white/10'
-                        }`}
-                      >
-                        <tab.icon className="w-4 h-4" />
-                        <span className="hidden sm:inline">{tab.label}</span>
-                      </button>
-                    ))}
-                  </div>
+{/* Progress Tabs */}
+<div className="flex gap-1 mt-6">
+  {tabs.map((tab, index) => (
+    <button
+      key={tab.id}
+      onClick={() => {
+        setActiveTab(tab.id);
+        setCurrentTabIndex(index); // Add this line
+      }}
+      className={`flex-1 py-3 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
+        activeTab === tab.id
+          ? 'bg-white text-indigo-600 shadow-lg'
+          : 'text-indigo-100 hover:bg-white/10'
+      }`}
+    >
+      <tab.icon className="w-4 h-4" />
+      <span className="hidden sm:inline">{tab.label}</span>
+    </button>
+  ))}
+</div>
                 </div>
 
                 {/* Form */}
@@ -1006,45 +1031,84 @@ const PlayerRegistrationPopup = ({ isOpen, onClose }) => {
                     </AnimatePresence>
                   </div>
 
-                  {/* Form Actions */}
-                  <div className="border-t border-gray-200 px-8 py-6 bg-gray-50">
-                    <div className="flex justify-between items-center">
-                      <div className="text-sm text-gray-600">
-                        <span className="font-semibold text-indigo-600">*</span> Required fields
-                      </div>
-                      <div className="flex gap-3">
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          type="button"
-                          onClick={onClose}
-                          className="px-8 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-100 transition-colors font-medium"
-                          disabled={loading}
-                        >
-                          Cancel
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          type="submit"
-                          className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-colors font-medium flex items-center gap-2 shadow-lg"
-                          disabled={loading}
-                        >
-                          {loading ? (
-                            <>
-                              <Loader size={18} className="animate-spin" />
-                              Processing...
-                            </>
-                          ) : (
-                            <>
-                              Proceed to Payment
-                              <ChevronRight size={18} />
-                            </>
-                          )}
-                        </motion.button>
-                      </div>
-                    </div>
-                  </div>
+{/* Form Actions */}
+<div className="border-t border-gray-200 px-8 py-6 bg-gray-50">
+  <div className="flex justify-between items-center">
+    <div className="text-sm text-gray-600">
+      <span className="font-semibold text-indigo-600">*</span> Required fields
+      <span className="ml-4 text-indigo-600 font-medium">
+        Step {currentTabIndex + 1} of {tabs.length}
+      </span>
+    </div>
+    <div className="flex gap-3">
+      {/* LAST TAB - Cancel and Proceed to Payment */}
+      {currentTabIndex === tabs.length - 1 ? (
+        <>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="button"
+            onClick={onClose}
+            className="px-8 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-100 transition-colors font-medium"
+            disabled={loading}
+          >
+            Cancel
+          </motion.button>
+          
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-colors font-medium flex items-center gap-2 shadow-lg"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <Loader size={18} className="animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                Proceed to Payment
+                <ChevronRight size={18} />
+              </>
+            )}
+          </motion.button>
+        </>
+      ) : (
+        /* NOT LAST TAB */
+        <>
+          {/* Back button - Show on all except first tab (including when clicked from progress tabs) */}
+          {currentTabIndex > 0 && (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              onClick={goToPreviousTab}
+              className="px-8 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-100 transition-colors font-medium"
+              disabled={loading}
+            >
+              ← Back
+            </motion.button>
+          )}
+          
+          {/* Next button - Show on all non-last tabs */}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="button"
+            onClick={goToNextTab}
+            className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-colors font-medium flex items-center gap-2 shadow-lg"
+            disabled={loading}
+          >
+            Next
+            <ChevronRight size={18} />
+          </motion.button>
+        </>
+      )}
+    </div>
+  </div>
+</div>
                 </form>
               </div>
             </motion.div>

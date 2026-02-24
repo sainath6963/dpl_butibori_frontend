@@ -91,6 +91,7 @@ const Header = () => {
     {name: 'Trail Days', icon: Users, path: '/trialdayselection' },
     { name: 'Day 1', icon: Calendar, path: '/dayone' },
     { name: 'Day 2', icon: Calendar, path: '/daytwo' },
+    {name:"ManagingDirector", icon:Users , path:'/managing-director'}
     /* { name: 'Teams', icon: Users, path: '/teams' },
     { name: 'Results', icon: Trophy, path: '/results' },
     { name: 'Contact', icon: Phone, path: '/contact' }, */
