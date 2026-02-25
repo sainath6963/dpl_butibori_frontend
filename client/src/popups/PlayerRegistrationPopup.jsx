@@ -263,96 +263,195 @@ const goToPreviousTab = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
 
-    const submitData = new FormData();
+//     const submitData = new FormData();
 
-    Object.keys(formData).forEach(key => {
-      if (key === "documents") {
-        Object.keys(formData.documents).forEach(docKey => {
-          if (formData.documents[docKey] instanceof File) {
-            submitData.append(docKey, formData.documents[docKey]);
+//     Object.keys(formData).forEach(key => {
+//       if (key === "documents") {
+//         Object.keys(formData.documents).forEach(docKey => {
+//           if (formData.documents[docKey] instanceof File) {
+//             submitData.append(docKey, formData.documents[docKey]);
+//           }
+//         });
+//       } 
+//       else if (
+//         key === "tournaments" ||
+//         key === "manOfTheMatchDetails" ||
+//         key === "manOfTheSeriesDetails"
+//       ) {
+//         submitData.append(key, JSON.stringify(formData[key]));
+//       } 
+//       else {
+//         submitData.append(key, formData[key]);
+//       }
+//     });
+
+//     const res = await dispatch(createPaymentOrder(submitData));
+
+//     if (!res.payload) {
+//       toast.error("Failed to initiate payment");
+//       return;
+//     }
+
+//     const { order, paymentId, key } = res.payload;
+
+//     const loaded = await loadRazorpay();
+//     if (!loaded) {
+//       toast.error("Razorpay SDK failed to load");
+//       return;
+//     }
+
+//     const options = {
+//       key,
+//       amount: order.amount,
+//       currency: order.currency,
+//       name: "DPL Tournament",
+//       description: "Player Registration Fee",
+//       order_id: order.id,
+//       image: "/logo.png", // Add your logo here
+//       handler: async function (response) {
+//         const verifyRes = await dispatch(
+//           verifyPayment({
+//             razorpayOrderId: response.razorpay_order_id,
+//             razorpayPaymentId: response.razorpay_payment_id,
+//             razorpaySignature: response.razorpay_signature,
+//             paymentId
+//           })
+//         );
+
+//         if (verifyRes.payload) {
+//           toast.success("🎉 Registration Completed Successfully!", {
+//             icon: '🏏',
+//             style: {
+//               borderRadius: '10px',
+//               background: '#333',
+//               color: '#fff',
+//             }
+//           });
+//           onClose();
+//           resetForm();
+//         }
+//       },
+//       prefill: {
+//         name: formData.fullName,
+//         email: formData.email,
+//         contact: formData.mobileNumber
+//       },
+//       theme: {
+//   color: "#6366f1"
+// },
+
+// modal: {
+//   ondismiss: function () {
+//     toast.error("Payment cancelled");
+//   }
+// }
+//     };
+
+//     const rzp = new window.Razorpay(options);
+//     rzp.open();
+//   };
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const submitData = new FormData();
+
+  Object.keys(formData).forEach(key => {
+    if (key === "documents") {
+      Object.keys(formData.documents).forEach(docKey => {
+        if (formData.documents[docKey] instanceof File) {
+          submitData.append(docKey, formData.documents[docKey]);
+        }
+      });
+    } 
+    else if (
+      key === "tournaments" ||
+      key === "manOfTheMatchDetails" ||
+      key === "manOfTheSeriesDetails"
+    ) {
+      submitData.append(key, JSON.stringify(formData[key]));
+    } 
+    else {
+      submitData.append(key, formData[key]);
+    }
+  });
+
+  const res = await dispatch(createPaymentOrder(submitData));
+
+  if (!res.payload) {
+    toast.error("Failed to initiate payment");
+    return;
+  }
+
+  const { order, paymentId, key } = res.payload;
+
+  const loaded = await loadRazorpay();
+  if (!loaded) {
+    toast.error("Razorpay SDK failed to load");
+    return;
+  }
+
+  const options = {
+    key,
+    amount: order.amount,
+    currency: order.currency,
+    name: "DPL Tournament",
+    description: "Player Registration Fee",
+    order_id: order.id,
+    image: "/logo.png",
+    handler: async function (response) {
+      const verifyRes = await dispatch(
+        verifyPayment({
+          razorpayOrderId: response.razorpay_order_id,
+          razorpayPaymentId: response.razorpay_payment_id,
+          razorpaySignature: response.razorpay_signature,
+          paymentId
+        })
+      );
+
+      if (verifyRes.payload) {
+        toast.success("🎉 Registration Completed Successfully!", {
+          icon: '🏏',
+          style: {
+            borderRadius: '10px',
+            background: '#333',
+            color: '#fff',
           }
         });
-      } 
-      else if (
-        key === "tournaments" ||
-        key === "manOfTheMatchDetails" ||
-        key === "manOfTheSeriesDetails"
-      ) {
-        submitData.append(key, JSON.stringify(formData[key]));
-      } 
-      else {
-        submitData.append(key, formData[key]);
+        onClose();
+        resetForm();
       }
-    });
-
-    const res = await dispatch(createPaymentOrder(submitData));
-
-    if (!res.payload) {
-      toast.error("Failed to initiate payment");
-      return;
+    },
+    prefill: {
+      name: formData.fullName,
+      email: formData.email,
+      contact: formData.mobileNumber
+    },
+    theme: {
+      color: "#6366f1"
+    },
+    modal: {
+      ondismiss: function () {
+        toast.error("Payment cancelled");
+        // 🔥 ADD THIS - Update payment status to cancelled
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/payments/status/${paymentId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: 'cancelled' })
+        }).catch(err => console.error('Failed to update payment status:', err));
+      }
     }
-
-    const { order, paymentId, key } = res.payload;
-
-    const loaded = await loadRazorpay();
-    if (!loaded) {
-      toast.error("Razorpay SDK failed to load");
-      return;
-    }
-
-    const options = {
-      key,
-      amount: order.amount,
-      currency: order.currency,
-      name: "DPL Tournament",
-      description: "Player Registration Fee",
-      order_id: order.id,
-      image: "/logo.png", // Add your logo here
-      handler: async function (response) {
-        const verifyRes = await dispatch(
-          verifyPayment({
-            razorpayOrderId: response.razorpay_order_id,
-            razorpayPaymentId: response.razorpay_payment_id,
-            razorpaySignature: response.razorpay_signature,
-            paymentId
-          })
-        );
-
-        if (verifyRes.payload) {
-          toast.success("🎉 Registration Completed Successfully!", {
-            icon: '🏏',
-            style: {
-              borderRadius: '10px',
-              background: '#333',
-              color: '#fff',
-            }
-          });
-          onClose();
-          resetForm();
-        }
-      },
-      prefill: {
-        name: formData.fullName,
-        email: formData.email,
-        contact: formData.mobileNumber
-      },
-      theme: {
-  color: "#6366f1"
-},
-
-modal: {
-  ondismiss: function () {
-    toast.error("Payment cancelled");
-  }
-}
-    };
-
-    const rzp = new window.Razorpay(options);
-    rzp.open();
   };
+
+  const rzp = new window.Razorpay(options);
+  rzp.open();
+};
 
   if (!isOpen) return null;
 

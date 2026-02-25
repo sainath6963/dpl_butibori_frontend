@@ -136,6 +136,25 @@ export const processRefund = createAsyncThunk(
   }
 );
 
+// ================= UPDATE PAYMENT STATUS (for cancellations) =================
+export const updatePaymentStatus = createAsyncThunk(
+  "payment/updateStatus",
+  async ({ paymentId, status }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.patch(
+        `${API}/api/v1/payments/status/${paymentId}`,
+        { status },
+        { withCredentials: true }
+      );
+      return data;
+    } catch (error) {
+      const message = error.response?.data?.message || "Failed to update payment status";
+      toast.error(message);
+      return rejectWithValue(message);
+    }
+  }
+);
+
 
 
 
