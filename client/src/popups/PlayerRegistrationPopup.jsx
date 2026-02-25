@@ -36,7 +36,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const PlayerRegistrationPopup = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
-  const { loading, success, error } = useSelector((state) => state.players);
+  const { loading, error } = useSelector((state) => state.players);
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -99,23 +99,18 @@ const goToPreviousTab = () => {
     setActiveTab(tabs[prevIndex].id);
   }
 };
-  useEffect(() => {
-    if (success) {
-      toast.success('🎉 Registration successful!', {
-        icon: '🏏',
-        style: {
-          borderRadius: '10px',
-          background: '#333',
-          color: '#fff',
-        }
-      });
-      setTimeout(() => {
-        onClose();
-        dispatch(clearPlayerSuccess());
-        resetForm();
-      }, 2000);
-    }
-  }, [success, dispatch, onClose]);
+ useEffect(() => {
+  if (error) {
+    toast.error(error, {
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+      }
+    });
+    dispatch(clearPlayerError());
+  }
+}, [error, dispatch]);
 
   useEffect(() => {
     if (error) {
@@ -345,8 +340,14 @@ const goToPreviousTab = () => {
         contact: formData.mobileNumber
       },
       theme: {
-        color: "#6366f1"
-      }
+  color: "#6366f1"
+},
+
+modal: {
+  ondismiss: function () {
+    toast.error("Payment cancelled");
+  }
+}
     };
 
     const rzp = new window.Razorpay(options);
