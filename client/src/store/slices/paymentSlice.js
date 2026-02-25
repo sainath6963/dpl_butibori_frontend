@@ -49,11 +49,18 @@ export const verifyPayment = createAsyncThunk(
         paymentData
       );
 
+      // 🔥 ADD THIS CHECK
+      if (!data.success) {
+        return rejectWithValue("Payment not verified");
+      }
+
       toast.success("Payment Successful 🎉");
       return data;
+
     } catch (error) {
       const message =
         error.response?.data?.message || "Payment verification failed";
+
       toast.error(message);
       return rejectWithValue(message);
     }
@@ -172,11 +179,17 @@ const paymentSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(verifyPayment.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
-        state.payment = action.payload.payment;
-      })
+     .addCase(verifyPayment.fulfilled, (state, action) => {
+  state.loading = false;
+
+  // ✅ Only mark success if backend  success = true
+  if (action.payload?.success) {
+    state.success = true;
+    state.payment = action.payload.payment;
+  } else {
+    state.success = false;
+  }
+})
       .addCase(verifyPayment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
