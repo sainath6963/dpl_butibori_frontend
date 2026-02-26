@@ -219,7 +219,7 @@ const FrontPageDpl = () => {
   {/* Season Text - Smaller than flood light text */}
     <div className="text-center mt-2">
       <p className="text-3xl md:text-4xl text-blue-200 font-light">
-        SEASON – 2 2026  . <span className="text-blue-200 font-light"> The Game Changer In Butibori</span>
+        SEASON – 2   (2026)  . <span className="text-blue-200 font-light"> The Game Changer In Butibori</span>
       </p>
     </div>
 

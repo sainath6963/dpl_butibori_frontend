@@ -14,10 +14,26 @@ import {
   RefreshCw,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  TrendingUp,
+  Calendar,
+  Mail,
+  Award,
+  X,
+  Wallet,
+  BadgeCheck,
+  AlertCircle,
+  ArrowUpRight,
+  FileText,
+  Printer,
+  FileDown,
+  FileSpreadsheet
 } from "lucide-react";
 import * as XLSX from 'xlsx';
 import { toast } from "react-toastify";
+import { motion, AnimatePresence } from "framer-motion";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const Players = () => {
   const dispatch = useDispatch();
@@ -27,660 +43,1055 @@ const Players = () => {
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [processingRefund, setProcessingRefund] = useState(null);
+  const [dateRange, setDateRange] = useState("all");
+  const [showFilters, setShowFilters] = useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getAllPayments());
   }, [dispatch]);
 
-  // Parse tournament data from metadata
-  const parseTournaments = (metadata) => {
+  // Parse JSON fields from metadata
+  const parseJSONField = (str) => {
     try {
-      const tournamentsStr = metadata?.formData?.tournaments;
-      return tournamentsStr ? JSON.parse(tournamentsStr) : [];
+      return str ? JSON.parse(str) : [];
     } catch {
       return [];
     }
   };
 
-  // Parse man of the match details
-  const parseManOfTheMatchDetails = (metadata) => {
-    try {
-      const detailsStr = metadata?.formData?.manOfTheMatchDetails;
-      return detailsStr ? JSON.parse(detailsStr) : [];
-    } catch {
-      return [];
-    }
+  // Format player data for export
+  const formatPlayerData = (payment) => {
+    const formData = payment.metadata?.formData || {};
+    const tournaments = parseJSONField(formData.tournaments);
+    const manOfTheMatchDetails = parseJSONField(formData.manOfTheMatchDetails);
+    const manOfTheSeriesDetails = parseJSONField(formData.manOfTheSeriesDetails);
+
+    return {
+      // Personal Information
+      fullName: formData.fullName || 'N/A',
+      email: formData.email || 'N/A',
+      mobileNumber: formData.mobileNumber || 'N/A',
+      address: formData.address || 'N/A',
+      dateOfBirth: formData.dateOfBirth || 'N/A',
+      aadharNumber: formData.aadharNumber || 'N/A',
+      height: formData.height || 'N/A',
+      weight: formData.weight || 'N/A',
+
+      // Cricket Details
+      isBatsman: formData.isBatsman === 'true' ? 'Yes' : 'No',
+      isBowler: formData.isBowler === 'true' ? 'Yes' : 'No',
+      isWicketKeeper: formData.isWicketKeeper === 'true' ? 'Yes' : 'No',
+      battingHand: formData.battingHand || 'N/A',
+      bowlingArm: formData.bowlingArm || 'N/A',
+      bowlingType: formData.bowlingType || 'N/A',
+
+      // Tournament Experience
+      playedTournament: formData.playedTournament === 'true' ? 'Yes' : 'No',
+      tournaments: tournaments.map(t => `${t.tournament} (${t.year}, ${t.ballType})`).join(', '),
+
+      // Achievements
+      manOfTheMatch: formData.manOfTheMatch === 'true' ? 'Yes' : 'No',
+      manOfTheMatchDetails: manOfTheMatchDetails.map(m => `${m.tournament} (${m.year})`).join(', '),
+      manOfTheSeries: formData.manOfTheSeries === 'true' ? 'Yes' : 'No',
+      manOfTheSeriesDetails: manOfTheSeriesDetails.map(m => `${m.tournament} (${m.year})`).join(', '),
+
+      // Payment Information
+      paymentId: payment._id,
+      razorpayOrderId: payment.razorpayOrderId,
+      razorpayPaymentId: payment.razorpayPaymentId || 'N/A',
+      amount: `₹${payment.amount}`,
+      currency: payment.currency,
+      status: payment.status,
+      paymentMethod: payment.paymentMethod || 'N/A',
+      description: payment.description,
+      invoiceGenerated: payment.invoiceGenerated ? 'Yes' : 'No',
+      createdAt: payment.createdAt ? new Date(payment.createdAt).toLocaleString() : 'N/A',
+      paidAt: payment.paidAt ? new Date(payment.paidAt).toLocaleString() : 'N/A'
+    };
   };
 
-  // Parse man of the series details
-  const parseManOfTheSeriesDetails = (metadata) => {
-    try {
-      const detailsStr = metadata?.formData?.manOfTheSeriesDetails;
-      return detailsStr ? JSON.parse(detailsStr) : [];
-    } catch {
-      return [];
-    }
+  // Export to Excel
+  const exportToExcel = () => {
+    const exportData = filteredPayments?.map(payment => {
+      const data = formatPlayerData(payment);
+      return {
+        'Full Name': data.fullName,
+        'Email': data.email,
+        'Mobile': data.mobileNumber,
+        'Address': data.address,
+        'Date of Birth': data.dateOfBirth,
+        'Aadhar Number': data.aadharNumber,
+        'Height (cm)': data.height,
+        'Weight (kg)': data.weight,
+        'Is Batsman': data.isBatsman,
+        'Is Bowler': data.isBowler,
+        'Is Wicket Keeper': data.isWicketKeeper,
+        'Batting Hand': data.battingHand,
+        'Bowling Arm': data.bowlingArm,
+        'Bowling Type': data.bowlingType,
+        'Played Tournament': data.playedTournament,
+        'Tournaments': data.tournaments,
+        'Man of the Match': data.manOfTheMatch,
+        'MOM Details': data.manOfTheMatchDetails,
+        'Man of the Series': data.manOfTheSeries,
+        'MOS Details': data.manOfTheSeriesDetails,
+        'Amount': data.amount,
+        'Status': data.status,
+        'Payment Method': data.paymentMethod,
+        'Payment Date': data.createdAt,
+        'Order ID': data.razorpayOrderId,
+        'Payment ID': data.paymentId,
+        'Invoice': data.invoiceGenerated
+      };
+    }) || [];
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    
+    // Set column widths
+    const colWidths = [
+      { wch: 20 }, { wch: 30 }, { wch: 15 }, { wch: 30 }, { wch: 12 },
+      { wch: 15 }, { wch: 8 }, { wch: 8 }, { wch: 10 }, { wch: 10 },
+      { wch: 15 }, { wch: 12 }, { wch: 12 }, { wch: 15 }, { wch: 12 },
+      { wch: 40 }, { wch: 12 }, { wch: 40 }, { wch: 12 }, { wch: 40 },
+      { wch: 10 }, { wch: 12 }, { wch: 15 }, { wch: 20 }, { wch: 25 },
+      { wch: 25 }, { wch: 8 }
+    ];
+    ws['!cols'] = colWidths;
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Payments");
+    const fileName = `payments_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    toast.success(`Exported ${exportData.length} records to Excel`);
   };
 
-  // Handle refund
-  const handleRefund = async (paymentId) => {
-    if (window.confirm('Are you sure you want to process a refund for this payment?')) {
-      setProcessingRefund(paymentId);
-      try {
-        await dispatch(processRefund(paymentId)).unwrap();
-        dispatch(getAllPayments()); // Refresh the list
-      } catch (error) {
-        // Error is already handled in the slice
-      } finally {
-        setProcessingRefund(null);
-      }
-    }
+  // Export to PDF
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(18);
+    doc.setTextColor(79, 70, 229);
+    doc.text('Payments Report', 14, 20);
+    
+    // Subtitle
+    doc.setFontSize(10);
+    doc.setTextColor(100, 116, 139);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 28);
+    
+    // Table data
+    const tableData = filteredPayments?.map(payment => {
+      const formData = payment.metadata?.formData || {};
+      return [
+        formData.fullName || 'N/A',
+        formData.mobileNumber || 'N/A',
+        `₹${payment.amount}`,
+        payment.status,
+        formData.isBatsman === 'true' ? 'Yes' : 'No',
+        formData.isBowler === 'true' ? 'Yes' : 'No',
+        payment.createdAt ? new Date(payment.createdAt).toLocaleDateString() : 'N/A'
+      ];
+    }) || [];
+
+    // Table columns
+    const columns = [
+      'Player Name',
+      'Mobile',
+      'Amount',
+      'Status',
+      'Batsman',
+      'Bowler',
+      'Date'
+    ];
+
+    doc.autoTable({
+      head: [columns],
+      body: tableData,
+      startY: 35,
+      theme: 'grid',
+      styles: { fontSize: 8, cellPadding: 3 },
+      headStyles: { fillColor: [79, 70, 229], textColor: 255 },
+      alternateRowStyles: { fillColor: [241, 245, 249] }
+    });
+
+    // Summary
+    const finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(10);
+    doc.setTextColor(31, 41, 55);
+    doc.text(`Total Records: ${filteredPayments?.length || 0}`, 14, finalY);
+    doc.text(`Total Amount: ₹${stats.successfulAmount.toLocaleString()}`, 14, finalY + 6);
+    doc.text(`Success Rate: ${completionRate}%`, 14, finalY + 12);
+
+    doc.save(`payments_${new Date().toISOString().split('T')[0]}.pdf`);
+    toast.success(`Exported ${tableData.length} records to PDF`);
   };
 
-  // Filter payments based on search and status
+  // Export single payment as PDF
+  const exportSinglePaymentPDF = (payment) => {
+    const doc = new jsPDF();
+    const formData = payment.metadata?.formData || {};
+    const tournaments = parseJSONField(formData.tournaments);
+    const momDetails = parseJSONField(formData.manOfTheMatchDetails);
+    const mosDetails = parseJSONField(formData.manOfTheSeriesDetails);
+
+    // Header
+    doc.setFillColor(79, 70, 229);
+    doc.rect(0, 0, 220, 40, 'F');
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.text('Payment Receipt', 14, 20);
+    
+    doc.setFontSize(12);
+    doc.text(`Receipt No: ${payment._id?.slice(-8)}`, 14, 30);
+    doc.text(`Date: ${new Date(payment.createdAt).toLocaleDateString()}`, 140, 30);
+
+    // Status
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(14);
+    doc.setTextColor(79, 70, 229);
+    doc.text('Payment Status:', 14, 50);
+    
+    const statusColor = payment.status === 'paid' ? 16 : payment.status === 'created' ? 245 : 239;
+    doc.setFillColor(statusColor, 68, 68);
+    doc.rect(60, 45, 40, 8, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(10);
+    doc.text(payment.status.toUpperCase(), 65, 51);
+
+    // Player Information
+    doc.setTextColor(31, 41, 55);
+    doc.setFontSize(14);
+    doc.text('Player Information', 14, 70);
+    
+    doc.setFontSize(10);
+    doc.text(`Full Name: ${formData.fullName || 'N/A'}`, 14, 80);
+    doc.text(`Email: ${formData.email || 'N/A'}`, 14, 87);
+    doc.text(`Mobile: ${formData.mobileNumber || 'N/A'}`, 14, 94);
+    doc.text(`Date of Birth: ${formData.dateOfBirth || 'N/A'}`, 14, 101);
+    doc.text(`Aadhar: ${formData.aadharNumber || 'N/A'}`, 14, 108);
+    doc.text(`Address: ${formData.address || 'N/A'}`, 14, 115);
+
+    // Cricket Details
+    doc.setFontSize(14);
+    doc.text('Cricket Details', 14, 130);
+    
+    doc.setFontSize(10);
+    doc.text(`Role: ${
+      [
+        formData.isBatsman === 'true' && 'Batsman',
+        formData.isBowler === 'true' && 'Bowler',
+        formData.isWicketKeeper === 'true' && 'WK'
+      ].filter(Boolean).join(', ') || 'N/A'
+    }`, 14, 140);
+    
+    doc.text(`Batting Hand: ${formData.battingHand || 'N/A'}`, 14, 147);
+    doc.text(`Bowling: ${formData.bowlingArm || 'N/A'} ${formData.bowlingType || ''}`, 14, 154);
+
+    // Payment Information
+    doc.setFontSize(14);
+    doc.text('Payment Information', 14, 170);
+    
+    doc.setFontSize(10);
+    doc.text(`Amount: ₹${payment.amount}`, 14, 180);
+    doc.text(`Payment Method: ${payment.paymentMethod || 'N/A'}`, 14, 187);
+    doc.text(`Order ID: ${payment.razorpayOrderId}`, 14, 194);
+    doc.text(`Payment ID: ${payment.razorpayPaymentId || 'N/A'}`, 14, 201);
+    doc.text(`Paid At: ${payment.paidAt ? new Date(payment.paidAt).toLocaleString() : 'N/A'}`, 14, 208);
+
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(156, 163, 175);
+    doc.text('This is a computer generated receipt.', 14, 280);
+
+    doc.save(`receipt_${formData.fullName || 'player'}_${new Date().toISOString().split('T')[0]}.pdf`);
+    toast.success('Receipt downloaded successfully');
+  };
+
+  // Calculate stats
+  const successfulPayments = payments?.filter(p => p.status === 'paid') || [];
+  
+  const stats = {
+    total: payments?.length || 0,
+    successful: successfulPayments.length,
+    successfulAmount: successfulPayments.reduce((sum, p) => sum + (p.amount || 0), 0),
+    pending: payments?.filter(p => p.status === 'created').length || 0,
+    failed: payments?.filter(p => p.status === 'failed' || p.status === 'cancelled').length || 0,
+    averageAmount: successfulPayments.length > 0 
+      ? (successfulPayments.reduce((sum, p) => sum + (p.amount || 0), 0) / successfulPayments.length).toFixed(2)
+      : 0
+  };
+
+  const completionRate = stats.total > 0 ? ((stats.successful / stats.total) * 100).toFixed(1) : 0;
+
+  // Filter payments
   const filteredPayments = payments?.filter(payment => {
     const formData = payment.metadata?.formData || {};
     const matchesSearch = 
       formData.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       formData.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       formData.mobileNumber?.includes(searchTerm) ||
-      payment.razorpayOrderId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment._id?.toLowerCase().includes(searchTerm.toLowerCase());
+      payment.razorpayOrderId?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === "all" || payment.status === statusFilter;
     
-    return matchesSearch && matchesStatus;
+    let matchesDate = true;
+    if (dateRange !== "all" && payment.createdAt) {
+      const paymentDate = new Date(payment.createdAt);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      switch(dateRange) {
+        case "today":
+          matchesDate = paymentDate >= today;
+          break;
+        case "week":
+          const weekAgo = new Date(today.setDate(today.getDate() - 7));
+          matchesDate = paymentDate >= weekAgo;
+          break;
+        case "month":
+          const monthAgo = new Date(today.setMonth(today.getMonth() - 1));
+          matchesDate = paymentDate >= monthAgo;
+          break;
+        default:
+          matchesDate = true;
+      }
+    }
+    
+    return matchesSearch && matchesStatus && matchesDate;
   });
 
-  // Export to Excel function
-  const exportToExcel = () => {
-    const exportData = filteredPayments?.map(payment => {
-      const formData = payment.metadata?.formData || {};
-      const tournaments = parseTournaments(payment.metadata);
-      const manOfTheMatchDetails = parseManOfTheMatchDetails(payment.metadata);
-      const manOfTheSeriesDetails = parseManOfTheSeriesDetails(payment.metadata);
-
-      return {
-        // Personal Information
-        'Full Name': formData.fullName || '',
-        'Email': formData.email || '',
-        'Mobile Number': formData.mobileNumber || '',
-        'Address': formData.address || '',
-        'Date of Birth': formData.dateOfBirth || '',
-        'Aadhar Number': formData.aadharNumber || '',
-        
-        // Physical Attributes
-        'Height (cm)': formData.height || '',
-        'Weight (kg)': formData.weight || '',
-        
-        // Cricket Details
-        'Is Batsman': formData.isBatsman === 'true' ? 'Yes' : 'No',
-        'Is Bowler': formData.isBowler === 'true' ? 'Yes' : 'No',
-        'Is Wicket Keeper': formData.isWicketKeeper === 'true' ? 'Yes' : 'No',
-        'Batting Hand': formData.battingHand || '',
-        'Bowling Arm': formData.bowlingArm || '',
-        'Bowling Type': formData.bowlingType || '',
-        
-        // Tournament Experience
-        'Played Tournament': formData.playedTournament === 'true' ? 'Yes' : 'No',
-        'Tournaments': tournaments.map(t => `${t.tournament} (${t.year}, ${t.ballType})`).join('; '),
-        
-        // Achievements
-        'Man of the Match': formData.manOfTheMatch === 'true' ? 'Yes' : 'No',
-        'Man of the Match Details': manOfTheMatchDetails.map(m => `${m.tournament} - ${m.date}`).join('; '),
-        'Man of the Series': formData.manOfTheSeries === 'true' ? 'Yes' : 'No',
-        'Man of the Series Details': manOfTheSeriesDetails.map(m => `${m.tournament} - ${m.date}`).join('; '),
-        
-        // Payment Information
-        'Payment ID': payment._id || '',
-        'Razorpay Order ID': payment.razorpayOrderId || '',
-        'Amount': `₹${payment.amount || 0}`,
-        'Currency': payment.currency || '',
-        'Status': payment.status || '',
-        'Description': payment.description || '',
-        'Invoice Generated': payment.invoiceGenerated ? 'Yes' : 'No',
-        'Payment Date': payment.createdAt ? new Date(payment.createdAt).toLocaleString() : '',
-      };
-    }) || [];
-
-    // Create worksheet
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    
-    // Set column widths
-    const colWidths = [
-      { wch: 20 }, // Full Name
-      { wch: 30 }, // Email
-      { wch: 15 }, // Mobile Number
-      { wch: 30 }, // Address
-      { wch: 15 }, // Date of Birth
-      { wch: 15 }, // Aadhar Number
-      { wch: 10 }, // Height
-      { wch: 10 }, // Weight
-      { wch: 10 }, // Is Batsman
-      { wch: 10 }, // Is Bowler
-      { wch: 15 }, // Is Wicket Keeper
-      { wch: 15 }, // Batting Hand
-      { wch: 15 }, // Bowling Arm
-      { wch: 15 }, // Bowling Type
-      { wch: 15 }, // Played Tournament
-      { wch: 40 }, // Tournaments
-      { wch: 15 }, // Man of the Match
-      { wch: 40 }, // Man of the Match Details
-      { wch: 15 }, // Man of the Series
-      { wch: 40 }, // Man of the Series Details
-      { wch: 25 }, // Payment ID
-      { wch: 25 }, // Razorpay Order ID
-      { wch: 10 }, // Amount
-      { wch: 8 },  // Currency
-      { wch: 12 }, // Status
-      { wch: 30 }, // Description
-      { wch: 15 }, // Invoice Generated
-      { wch: 20 }, // Payment Date
-    ];
-    ws['!cols'] = colWidths;
-
-    // Create workbook
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Payments");
-    
-    // Generate filename with current date
-    const fileName = `payments_export_${new Date().toISOString().split('T')[0]}.xlsx`;
-    
-    // Save file
-    XLSX.writeFile(wb, fileName);
-    
-    toast.success(`Exported ${exportData.length} records to Excel`);
-  };
-
-  // Get status badge color
+  // Status badge helpers
   const getStatusBadge = (status) => {
-    switch(status) {
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'created':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'failed':
-        return 'bg-red-100 text-red-800';
-      case 'refunded':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+    const badges = {
+      'paid': 'bg-emerald-100 text-emerald-700 border-emerald-200',
+      'created': 'bg-amber-100 text-amber-700 border-amber-200',
+      'failed': 'bg-rose-100 text-rose-700 border-rose-200',
+      'cancelled': 'bg-slate-100 text-slate-700 border-slate-200',
+      'refunded': 'bg-purple-100 text-purple-700 border-purple-200'
+    };
+    return badges[status] || 'bg-gray-100 text-gray-700 border-gray-200';
   };
 
-  // Get status icon
   const getStatusIcon = (status) => {
-    switch(status) {
-      case 'completed':
-        return <CheckCircle className="w-4 h-4" />;
-      case 'created':
-        return <Clock className="w-4 h-4" />;
-      case 'failed':
-        return <XCircle className="w-4 h-4" />;
-      default:
-        return null;
-    }
-  };
-
-  // Get unique statuses for filter
-  const statuses = ['all', ...new Set(payments?.map(p => p.status) || [])];
-
-  // Calculate stats
-  const stats = {
-    total: payments?.length || 0,
-    totalAmount: payments?.reduce((sum, p) => sum + (p.amount || 0), 0) || 0,
-    completed: payments?.filter(p => p.status === 'completed').length || 0,
-    // pending: payments?.filter(p => p.status === 'created').length || 0,
-    // failed: payments?.filter(p => p.status === 'failed').length || 0,
-    // refunded: payments?.filter(p => p.status === 'refunded').length || 0,
+    const icons = {
+      'paid': <CheckCircle className="w-4 h-4" />,
+      'created': <Clock className="w-4 h-4" />,
+      'failed': <XCircle className="w-4 h-4" />,
+      'cancelled': <XCircle className="w-4 h-4" />,
+      'refunded': <RefreshCw className="w-4 h-4" />
+    };
+    return icons[status] || null;
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
+          <p className="text-slate-600">Loading payments...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center text-red-600 p-6">
-        Error loading payments: {error}
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="bg-white p-8 rounded-2xl shadow-lg text-center max-w-md">
+          <AlertCircle className="w-16 h-16 text-rose-500 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-slate-800 mb-2">Error Loading Payments</h3>
+          <p className="text-slate-600 mb-4">{error}</p>
+          <button
+            onClick={() => dispatch(getAllPayments())}
+            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 w-full max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-          <CreditCard className="w-8 h-8 text-blue-600" />
-          Payments Management
-        </h1>
-
-        {/* Export Button */}
-        <button
-          onClick={exportToExcel}
-          disabled={!filteredPayments?.length}
-          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          <Download className="w-5 h-5" />
-          Export to Excel
-        </button>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-        <div className="bg-white shadow-lg rounded-xl p-4 border">
-          <p className="text-gray-500 text-sm">Total</p>
-          <h2 className="text-2xl font-bold">{stats.total}</h2>
-        </div>
-        <div className="bg-white shadow-lg rounded-xl p-4 border">
-          <p className="text-gray-500 text-sm">Total Amount</p>
-          <h2 className="text-2xl font-bold text-green-600">₹{stats.totalAmount}</h2>
-        </div>
-  
-        
-
-      </div>
-
-      {/* Search and Filter Bar */}
-      <div className="mb-6 flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            type="text"
-            placeholder="Search by name, email, mobile, order ID or payment ID..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        
-        <div className="relative">
-          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="pl-10 pr-8 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white min-w-[160px]"
-          >
-            {statuses.map(status => (
-              <option key={status} value={status}>
-                {status === 'all' ? 'All Status' : status.charAt(0).toUpperCase() + status.slice(1)}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
-        </div>
-      </div>
-
-      {/* Payments Table */}
-      {filteredPayments?.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl shadow">
-          <CreditCard className="w-16 h-16 mx-auto text-gray-300 mb-3" />
-          <p className="text-gray-500 text-lg">No payments found</p>
-          {searchTerm && (
-            <p className="text-gray-400">Try adjusting your search</p>
-          )}
-        </div>
-      ) : (
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Player
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Contact
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Cricket Details
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Payment
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredPayments?.map((payment) => {
-                  const formData = payment.metadata?.formData || {};
-                  const tournaments = parseTournaments(payment.metadata);
-                  
-                  return (
-                    <tr key={payment._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4">
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            {formData.fullName || 'N/A'}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            DOB: {formData.dateOfBirth || 'N/A'}
-                          </div>
-                          <div className="text-xs text-gray-400">
-                            Aadhar: {formData.aadharNumber ? `****${formData.aadharNumber.slice(-4)}` : 'N/A'}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div>
-                          <div className="text-sm text-gray-900">
-                            {formData.email || 'N/A'}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {formData.mobileNumber || 'N/A'}
-                          </div>
-                          <div className="text-xs text-gray-400">
-                            {formData.address?.substring(0, 30)}...
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="space-y-1">
-                          <div className="text-sm">
-                            <span className="font-medium">Bat:</span> {formData.battingHand || 'N/A'}
-                          </div>
-                          <div className="text-sm">
-                            <span className="font-medium">Role:</span>{' '}
-                            {[
-                              formData.isBatsman === 'true' && 'Batsman',
-                              formData.isBowler === 'true' && 'Bowler',
-                              formData.isWicketKeeper === 'true' && 'WK'
-                            ].filter(Boolean).join(', ') || 'N/A'}
-                          </div>
-                          {tournaments.length > 0 && (
-                            <div className="text-xs text-gray-500">
-                              {tournaments.length} tournament(s) played
-                            </div>
-                          )}
-                          <div className="text-xs text-gray-400">
-                            H: {formData.height || 'N/A'}cm | W: {formData.weight || 'N/A'}kg
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            ₹{payment.amount || 0}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Order: {payment.razorpayOrderId?.slice(-8)}
-                          </div>
-                          <div className="text-xs text-gray-400">
-                            ID: {payment._id?.slice(-6)}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full ${getStatusBadge(payment.status)}`}>
-                          {getStatusIcon(payment.status)}
-                          {payment.status || 'N/A'}
-                        </span>
-                        {payment.invoiceGenerated && (
-                          <div className="text-xs text-green-600 mt-1">Invoice Generated</div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {payment.createdAt ? new Date(payment.createdAt).toLocaleDateString() : 'N/A'}
-                        <div className="text-xs text-gray-400">
-                          {payment.createdAt ? new Date(payment.createdAt).toLocaleTimeString() : ''}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => {
-                              setSelectedPayment(payment);
-                              setShowModal(true);
-                            }}
-                            className="text-blue-600 hover:text-blue-800 p-1"
-                            title="View Details"
-                          >
-                            <Eye className="w-5 h-5" />
-                          </button>
-                          {payment.status === 'completed' && (
-                            <button
-                              onClick={() => handleRefund(payment._id)}
-                              disabled={processingRefund === payment._id}
-                              className="text-purple-600 hover:text-purple-800 p-1 disabled:opacity-50"
-                              title="Process Refund"
-                            >
-                              {processingRefund === payment._id ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                              ) : (
-                                <RefreshCw className="w-5 h-5" />
-                              )}
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold text-slate-800 flex items-center gap-3">
+                <Wallet className="w-8 h-8 md:w-10 md:h-10 text-indigo-600" />
+                Payments Overview
+              </h1>
+              <p className="text-slate-500 mt-1 flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                {new Date().toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
                 })}
-              </tbody>
-            </table>
+              </p>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all shadow-sm"
+              >
+                <Filter className="w-4 h-4 text-slate-600" />
+                <span className="text-slate-700">Filters</span>
+                <ChevronDown className={`w-4 h-4 text-slate-600 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {/* Export Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setExportMenuOpen(!exportMenuOpen)}
+                  disabled={!filteredPayments?.length}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Download className="w-4 h-4" />
+                  <span className="hidden sm:inline">Export</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${exportMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                <AnimatePresence>
+                  {exportMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden z-10"
+                    >
+                      <button
+                        onClick={() => {
+                          exportToExcel();
+                          setExportMenuOpen(false);
+                        }}
+                        className="w-full px-4 py-3 text-left hover:bg-slate-50 flex items-center gap-3 text-slate-700"
+                      >
+                        <FileSpreadsheet className="w-4 h-4 text-green-600" />
+                        Excel Export
+                      </button>
+                      <button
+                        onClick={() => {
+                          exportToPDF();
+                          setExportMenuOpen(false);
+                        }}
+                        className="w-full px-4 py-3 text-left hover:bg-slate-50 flex items-center gap-3 text-slate-700"
+                      >
+                        <FileText className="w-4 h-4 text-red-600" />
+                        PDF Export
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
           </div>
         </div>
-      )}
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {/* Total Payments */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-indigo-100 rounded-xl">
+                <CreditCard className="w-6 h-6 text-indigo-600" />
+              </div>
+              <span className="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded-full">
+                Total
+              </span>
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800">{stats.total}</h3>
+            <p className="text-sm text-slate-500 mt-1">All payments received</p>
+          </motion.div>
+
+          {/* Successful Payments - Total Count */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-emerald-100 rounded-xl">
+                <BadgeCheck className="w-6 h-6 text-emerald-600" />
+              </div>
+              <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                {completionRate}% success
+              </span>
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800">{stats.successful}</h3>
+            <p className="text-sm text-slate-500 mt-1">Successful payments</p>
+          </motion.div>
+
+          {/* Total Revenue - FROM SUCCESSFUL PAYMENTS ONLY */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-blue-100 rounded-xl">
+                <TrendingUp className="w-6 h-6 text-blue-600" />
+              </div>
+              <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                Revenue
+              </span>
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800">₹{stats.successfulAmount.toLocaleString()}</h3>
+            <p className="text-sm text-slate-500 mt-1">From successful payments</p>
+          </motion.div>
+
+          {/* Average Payment */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-purple-100 rounded-xl">
+                <DollarSign className="w-6 h-6 text-purple-600" />
+              </div>
+              <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
+                Average
+              </span>
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800">₹{stats.averageAmount}</h3>
+            <p className="text-sm text-slate-500 mt-1">Per successful payment</p>
+          </motion.div>
+        </div>
+
+        {/* Quick Stats Row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-amber-100 rounded-lg">
+                <Clock className="w-4 h-4 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Pending</p>
+                <p className="text-lg font-semibold text-slate-800">{stats.pending}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-rose-100 rounded-lg">
+                <XCircle className="w-4 h-4 text-rose-600" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Failed</p>
+                <p className="text-lg font-semibold text-slate-800">{stats.failed}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-emerald-100 rounded-lg">
+                <ArrowUpRight className="w-4 h-4 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Success Rate</p>
+                <p className="text-lg font-semibold text-slate-800">{completionRate}%</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-indigo-100 rounded-lg">
+                <FileText className="w-4 h-4 text-indigo-600" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Invoices</p>
+                <p className="text-lg font-semibold text-slate-800">{payments?.filter(p => p.invoiceGenerated).length || 0}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Filters Section */}
+        <AnimatePresence>
+          {showFilters && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-6 overflow-hidden"
+            >
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                <div className="grid md:grid-cols-3 gap-4">
+                  {/* Search */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      placeholder="Search by name, email, phone..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  {/* Status Filter */}
+                  <div className="relative">
+                    <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="w-full pl-10 pr-8 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent appearance-none bg-white"
+                    >
+                      <option value="all">All Status</option>
+                      <option value="paid">Paid</option>
+                      <option value="created">Pending</option>
+                      <option value="failed">Failed</option>
+                      <option value="cancelled">Cancelled</option>
+                      <option value="refunded">Refunded</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none" />
+                  </div>
+                  
+                  {/* Date Range */}
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <select
+                      value={dateRange}
+                      onChange={(e) => setDateRange(e.target.value)}
+                      className="w-full pl-10 pr-8 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent appearance-none bg-white"
+                    >
+                      <option value="all">All Time</option>
+                      <option value="today">Today</option>
+                      <option value="week">Last 7 Days</option>
+                      <option value="month">Last 30 Days</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Payments Table */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+          {filteredPayments?.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="bg-slate-50 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Wallet className="w-10 h-10 text-slate-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-800 mb-1">No payments found</h3>
+              <p className="text-slate-500">Try adjusting your search or filters</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-slate-50 border-b border-slate-100">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Player</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Contact</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Amount</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredPayments?.map((payment, index) => {
+                    const formData = payment.metadata?.formData || {};
+                    return (
+                      <motion.tr
+                        key={payment._id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="hover:bg-slate-50 transition-colors"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                              {formData.fullName?.charAt(0) || '?'}
+                            </div>
+                            <div>
+                              <p className="font-medium text-slate-800">{formData.fullName || 'N/A'}</p>
+                              <p className="text-xs text-slate-500">ID: {payment._id?.slice(-8)}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-sm text-slate-600">{formData.email || 'N/A'}</p>
+                          <p className="text-xs text-slate-500">{formData.mobileNumber || 'N/A'}</p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="font-semibold text-slate-800">₹{payment.amount || 0}</p>
+                          <p className="text-xs text-slate-500">{payment.paymentMethod || 'N/A'}</p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full border ${getStatusBadge(payment.status)}`}>
+                            {getStatusIcon(payment.status)}
+                            {payment.status?.charAt(0).toUpperCase() + payment.status?.slice(1)}
+                          </span>
+                          {payment.invoiceGenerated && (
+                            <p className="text-xs text-emerald-600 mt-1">✓ Invoice</p>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-sm text-slate-600">
+                            {payment.createdAt ? new Date(payment.createdAt).toLocaleDateString() : 'N/A'}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            {payment.createdAt ? new Date(payment.createdAt).toLocaleTimeString() : ''}
+                          </p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => {
+                                setSelectedPayment(payment);
+                                setShowModal(true);
+                              }}
+                              className="p-2 hover:bg-indigo-50 rounded-lg transition-colors text-indigo-600"
+                              title="View Details"
+                            >
+                              <Eye className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => exportSinglePaymentPDF(payment)}
+                              className="p-2 hover:bg-emerald-50 rounded-lg transition-colors text-emerald-600"
+                              title="Download Receipt PDF"
+                            >
+                              <FileDown className="w-5 h-5" />
+                            </button>
+                            {payment.status === 'paid' && (
+                              <button
+                                onClick={() => handleRefund(payment._id)}
+                                disabled={processingRefund === payment._id}
+                                className="p-2 hover:bg-purple-50 rounded-lg transition-colors text-purple-600 disabled:opacity-50"
+                                title="Process Refund"
+                              >
+                                {processingRefund === payment._id ? (
+                                  <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : (
+                                  <RefreshCw className="w-5 h-5" />
+                                )}
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </motion.tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Footer Stats */}
+        <div className="mt-6 flex justify-between items-center text-sm text-slate-500">
+          <p>Showing {filteredPayments?.length || 0} of {payments?.length || 0} payments</p>
+          <p className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>Successful: ₹{stats.successfulAmount.toLocaleString()}</span>
+          </p>
+        </div>
+      </div>
 
       {/* Payment Details Modal */}
-      {showModal && selectedPayment && (
-        <PaymentDetailsModal
-          payment={selectedPayment}
-          onClose={() => {
-            setShowModal(false);
-            setSelectedPayment(null);
-          }}
-          onRefund={handleRefund}
-          processingRefund={processingRefund}
-        />
-      )}
+      <AnimatePresence>
+        {showModal && selectedPayment && (
+          <PaymentDetailsModal
+            payment={selectedPayment}
+            onClose={() => {
+              setShowModal(false);
+              setSelectedPayment(null);
+            }}
+            onRefund={handleRefund}
+            processingRefund={processingRefund}
+            onDownloadPDF={exportSinglePaymentPDF}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
-// Payment Details Modal Component
-const PaymentDetailsModal = ({ payment, onClose, onRefund, processingRefund }) => {
+// Enhanced Payment Details Modal with ALL metadata
+const PaymentDetailsModal = ({ payment, onClose, onRefund, processingRefund, onDownloadPDF }) => {
   const formData = payment.metadata?.formData || {};
 
-  // Parse JSON fields
-  const parseJSON = (str) => {
+  const parseJSONField = (str) => {
     try {
-      return JSON.parse(str || '[]');
+      return str ? JSON.parse(str) : [];
     } catch {
       return [];
     }
   };
 
-  const tournaments = parseJSON(formData.tournaments);
-  const manOfTheMatchDetails = parseJSON(formData.manOfTheMatchDetails);
-  const manOfTheSeriesDetails = parseJSON(formData.manOfTheSeriesDetails);
+  const tournaments = parseJSONField(formData.tournaments);
+  const manOfTheMatchDetails = parseJSONField(formData.manOfTheMatchDetails);
+  const manOfTheSeriesDetails = parseJSONField(formData.manOfTheSeriesDetails);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b sticky top-0 bg-white">
-          <h2 className="text-2xl font-bold text-gray-800">Payment Details</h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <XCircle className="w-6 h-6" />
-          </button>
+        <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-indigo-100 rounded-xl">
+              <Wallet className="w-6 h-6 text-indigo-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-800">Complete Payment Details</h2>
+              <p className="text-sm text-slate-500">ID: {payment._id}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onDownloadPDF(payment)}
+              className="p-2 hover:bg-emerald-50 rounded-lg transition-colors text-emerald-600"
+              title="Download PDF"
+            >
+              <FileDown className="w-5 h-5" />
+            </button>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5 text-slate-500" />
+            </button>
+          </div>
         </div>
 
         {/* Content */}
         <div className="p-6 space-y-6">
-          {/* Personal Information */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-600" />
-              Personal Information
-            </h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm text-gray-500">Full Name</label>
-                <p className="font-medium">{formData.fullName || 'N/A'}</p>
+          {/* Status Banner */}
+          <div className={`p-4 rounded-xl ${
+            payment.status === 'paid' ? 'bg-emerald-50 border border-emerald-200' :
+            payment.status === 'created' ? 'bg-amber-50 border border-amber-200' :
+            'bg-rose-50 border border-rose-200'
+          }`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {payment.status === 'paid' ? <CheckCircle className="w-8 h-8 text-emerald-600" /> :
+                 payment.status === 'created' ? <Clock className="w-8 h-8 text-amber-600" /> :
+                 <XCircle className="w-8 h-8 text-rose-600" />}
+                <div>
+                  <p className="font-semibold text-slate-800">
+                    Payment {payment.status === 'paid' ? 'Successful' : 
+                             payment.status === 'created' ? 'Pending' : 'Failed'}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    {payment.status === 'paid' ? `Paid via ${payment.paymentMethod || 'N/A'} on ${payment.paidAt ? new Date(payment.paidAt).toLocaleString() : 'N/A'}` :
+                     payment.status === 'created' ? 'Awaiting payment confirmation' :
+                     'Payment was not completed'}
+                  </p>
+                </div>
               </div>
-              <div>
-                <label className="text-sm text-gray-500">Date of Birth</label>
-                <p className="font-medium">{formData.dateOfBirth || 'N/A'}</p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-500">Aadhar Number</label>
-                <p className="font-medium">{formData.aadharNumber || 'N/A'}</p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-500">Height/Weight</label>
-                <p className="font-medium">{formData.height || 'N/A'} cm / {formData.weight || 'N/A'} kg</p>
-              </div>
-              <div className="md:col-span-2">
-                <label className="text-sm text-gray-500">Address</label>
-                <p className="font-medium">{formData.address || 'N/A'}</p>
-              </div>
+              <span className={`px-3 py-1.5 rounded-full text-xs font-medium border ${
+                payment.status === 'paid' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
+                payment.status === 'created' ? 'bg-amber-100 text-amber-700 border-amber-200' :
+                'bg-rose-100 text-rose-700 border-rose-200'
+              }`}>
+                {payment.status?.toUpperCase()}
+              </span>
             </div>
           </div>
 
-          {/* Contact Information */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Mail className="w-5 h-5 text-blue-600" />
-              Contact Information
+          {/* Personal Information */}
+          <div className="bg-slate-50 rounded-xl p-4">
+            <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+              <Users className="w-4 h-4 text-indigo-600" />
+              Personal Information
             </h3>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-sm text-gray-500">Email</label>
-                <p className="font-medium">{formData.email || 'N/A'}</p>
+                <p className="text-xs text-slate-500">Full Name</p>
+                <p className="font-medium text-slate-800">{formData.fullName || 'N/A'}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500">Mobile Number</label>
-                <p className="font-medium">{formData.mobileNumber || 'N/A'}</p>
+                <p className="text-xs text-slate-500">Email</p>
+                <p className="font-medium text-slate-800">{formData.email || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Mobile</p>
+                <p className="font-medium text-slate-800">{formData.mobileNumber || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Date of Birth</p>
+                <p className="font-medium text-slate-800">{formData.dateOfBirth || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Aadhar Number</p>
+                <p className="font-medium text-slate-800">{formData.aadharNumber || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Address</p>
+                <p className="font-medium text-slate-800">{formData.address || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Height</p>
+                <p className="font-medium text-slate-800">{formData.height || 'N/A'} cm</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Weight</p>
+                <p className="font-medium text-slate-800">{formData.weight || 'N/A'} kg</p>
               </div>
             </div>
           </div>
 
           {/* Cricket Details */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Award className="w-5 h-5 text-blue-600" />
+          <div className="bg-slate-50 rounded-xl p-4">
+            <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+              <Award className="w-4 h-4 text-indigo-600" />
               Cricket Details
             </h3>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <label className="text-sm text-gray-500">Role</label>
-                <p className="font-medium">
-                  {[
-                    formData.isBatsman === 'true' && 'Batsman',
-                    formData.isBowler === 'true' && 'Bowler',
-                    formData.isWicketKeeper === 'true' && 'Wicket Keeper'
-                  ].filter(Boolean).join(', ') || 'N/A'}
-                </p>
+                <p className="text-xs text-slate-500">Batsman</p>
+                <p className="font-medium text-slate-800">{formData.isBatsman === 'true' ? 'Yes' : 'No'}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500">Batting Hand</label>
-                <p className="font-medium">{formData.battingHand || 'N/A'}</p>
+                <p className="text-xs text-slate-500">Bowler</p>
+                <p className="font-medium text-slate-800">{formData.isBowler === 'true' ? 'Yes' : 'No'}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500">Bowling</label>
-                <p className="font-medium">
-                  {formData.bowlingArm && formData.bowlingType 
-                    ? `${formData.bowlingArm} - ${formData.bowlingType}`
-                    : 'N/A'}
-                </p>
+                <p className="text-xs text-slate-500">Wicket Keeper</p>
+                <p className="font-medium text-slate-800">{formData.isWicketKeeper === 'true' ? 'Yes' : 'No'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Batting Hand</p>
+                <p className="font-medium text-slate-800">{formData.battingHand || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Bowling Arm</p>
+                <p className="font-medium text-slate-800">{formData.bowlingArm || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Bowling Type</p>
+                <p className="font-medium text-slate-800">{formData.bowlingType || 'N/A'}</p>
               </div>
             </div>
           </div>
 
-          {/* Tournament Experience */}
+          {/* Tournament History */}
           {tournaments.length > 0 && (
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h3 className="text-lg font-semibold mb-4">Tournament Experience</h3>
+            <div className="bg-slate-50 rounded-xl p-4">
+              <h3 className="font-semibold text-slate-800 mb-3">Tournament History</h3>
               <div className="space-y-2">
-                {tournaments.map((tournament, index) => (
-                  <div key={index} className="bg-white p-3 rounded border">
-                    <p className="font-medium">{tournament.tournament}</p>
-                    <p className="text-sm text-gray-600">Year: {tournament.year} | Ball Type: {tournament.ballType}</p>
+                {tournaments.map((t, i) => (
+                  <div key={i} className="bg-white p-3 rounded-lg border border-slate-200">
+                    <p className="font-medium">{t.tournament}</p>
+                    <p className="text-sm text-slate-600">Year: {t.year} | Ball Type: {t.ballType}</p>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
+          {/* Achievements */}
+          {(manOfTheMatchDetails.length > 0 || manOfTheSeriesDetails.length > 0) && (
+            <div className="bg-slate-50 rounded-xl p-4">
+              <h3 className="font-semibold text-slate-800 mb-3">Achievements</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                {manOfTheMatchDetails.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium text-slate-700 mb-2">Man of the Match</p>
+                    {manOfTheMatchDetails.map((m, i) => (
+                      <div key={i} className="bg-white p-2 rounded border border-slate-200 mb-2">
+                        <p className="text-sm">{m.tournament} ({m.year})</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {manOfTheSeriesDetails.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium text-slate-700 mb-2">Man of the Series</p>
+                    {manOfTheSeriesDetails.map((m, i) => (
+                      <div key={i} className="bg-white p-2 rounded border border-slate-200 mb-2">
+                        <p className="text-sm">{m.tournament} ({m.year})</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Payment Information */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-blue-600" />
+          <div className="bg-slate-50 rounded-xl p-4">
+            <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+              <CreditCard className="w-4 h-4 text-indigo-600" />
               Payment Information
             </h3>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-sm text-gray-500">Payment ID</label>
-                <p className="font-medium text-sm">{payment._id}</p>
+                <p className="text-xs text-slate-500">Amount</p>
+                <p className="text-xl font-bold text-slate-800">₹{payment.amount}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500">Razorpay Order ID</label>
-                <p className="font-medium text-sm">{payment.razorpayOrderId}</p>
+                <p className="text-xs text-slate-500">Payment Method</p>
+                <p className="font-medium text-slate-800">{payment.paymentMethod || 'N/A'}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500">Amount</label>
-                <p className="font-medium text-lg text-green-600">₹{payment.amount}</p>
+                <p className="text-xs text-slate-500">Description</p>
+                <p className="font-medium text-slate-800">{payment.description}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500">Status</label>
-                <p className="font-medium">
-                  <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full ${
-                    payment.status === 'completed' 
-                      ? 'bg-green-100 text-green-800'
-                      : payment.status === 'created'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : payment.status === 'failed'
-                      ? 'bg-red-100 text-red-800'
-                      : payment.status === 'refunded'
-                      ? 'bg-purple-100 text-purple-800'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}>
-                    {payment.status}
-                  </span>
-                </p>
+                <p className="text-xs text-slate-500">Order ID</p>
+                <p className="text-sm font-mono text-slate-600">{payment.razorpayOrderId}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500">Date</label>
-                <p className="font-medium">{new Date(payment.createdAt).toLocaleString()}</p>
+                <p className="text-xs text-slate-500">Payment ID</p>
+                <p className="text-sm font-mono text-slate-600">{payment.razorpayPaymentId || 'N/A'}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500">Description</label>
-                <p className="font-medium">{payment.description}</p>
+                <p className="text-xs text-slate-500">Created At</p>
+                <p className="text-sm text-slate-600">{payment.createdAt ? new Date(payment.createdAt).toLocaleString() : 'N/A'}</p>
               </div>
-              <div>
-                <label className="text-sm text-gray-500">Invoice Generated</label>
-                <p className="font-medium">{payment.invoiceGenerated ? 'Yes' : 'No'}</p>
-              </div>
+              {payment.paidAt && (
+                <div>
+                  <p className="text-xs text-slate-500">Paid At</p>
+                  <p className="text-sm text-slate-600">{new Date(payment.paidAt).toLocaleString()}</p>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Refund Button */}
-          {payment.status === 'completed' && (
-            <div className="flex justify-end">
+          {/* Action Buttons */}
+          <div className="flex gap-3 pt-4">
+            {payment.status === 'paid' && (
               <button
                 onClick={() => {
                   onRefund(payment._id);
                   onClose();
                 }}
                 disabled={processingRefund === payment._id}
-                className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+                className="flex-1 flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-3 rounded-xl hover:bg-purple-700 transition-colors disabled:opacity-50"
               >
                 {processingRefund === payment._id ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -689,31 +1100,26 @@ const PaymentDetailsModal = ({ payment, onClose, onRefund, processingRefund }) =
                 )}
                 Process Refund
               </button>
-            </div>
-          )}
+            )}
+            <button
+              onClick={() => onDownloadPDF(payment)}
+              className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 text-white px-4 py-3 rounded-xl hover:bg-indigo-700 transition-colors"
+            >
+              <FileDown className="w-5 h-5" />
+              Download Receipt
+            </button>
+            <button
+              onClick={() => window.print()}
+              className="flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-50 transition-colors"
+            >
+              <Printer className="w-5 h-5" />
+              Print
+            </button>
+          </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
-
-// Missing icon imports
-const Mail = (props) => (
-  <svg {...props} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-  </svg>
-);
-
-const Award = (props) => (
-  <svg {...props} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-);
-
-// const XCircle = (props) => (
-//   <svg {...props} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-//   </svg>
-// );
 
 export default Players;

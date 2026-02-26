@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   createPaymentOrder,
-  verifyPayment
+  verifyPayment,
+   updatePaymentStatus
 } from '../store/slices/paymentSlice';
 
 import {
@@ -388,6 +389,10 @@ const handleSubmit = async (e) => {
   }
 
   const { order, paymentId, key } = res.payload;
+  
+  // Store paymentId globally for debugging
+  window.lastPaymentId = paymentId;
+  console.log("💰 Payment created with ID:", paymentId);
 
   const loaded = await loadRazorpay();
   if (!loaded) {
@@ -404,6 +409,7 @@ const handleSubmit = async (e) => {
     order_id: order.id,
     image: "/logo.png",
     handler: async function (response) {
+      console.log("✅ Payment successful:", response);
       const verifyRes = await dispatch(
         verifyPayment({
           razorpayOrderId: response.razorpay_order_id,
@@ -435,22 +441,36 @@ const handleSubmit = async (e) => {
       color: "#6366f1"
     },
     modal: {
-      ondismiss: function () {
-        toast.error("Payment cancelled");
-        // 🔥 ADD THIS - Update payment status to cancelled
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/payments/status/${paymentId}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status: 'cancelled' })
-        }).catch(err => console.error('Failed to update payment status:', err));
-      }
-    }
+  ondismiss: function () {
+    console.log("🔴 Payment Cancelled");
+
+   dispatch(
+  updatePaymentStatus({ paymentId, status: "cancelled" })
+);
+
+    toast.error("Payment Cancelled ❌");
+  }
+}
   };
 
-  const rzp = new window.Razorpay(options);
-  rzp.open();
+const rzp = new window.Razorpay(options);
+
+// FAILURE
+rzp.on("payment.failed", function () {
+  console.log("🔥 Payment Failed Event");
+
+  dispatch(
+    updatePaymentStatus({
+      paymentId,
+      status: "failed",
+    })
+  );
+
+  toast.error("Payment Failed ❌");
+});
+
+// OPEN AFTER ATTACHING LISTENER
+rzp.open();
 };
 
   if (!isOpen) return null;

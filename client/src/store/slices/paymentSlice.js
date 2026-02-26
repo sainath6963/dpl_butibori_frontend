@@ -141,6 +141,9 @@ export const updatePaymentStatus = createAsyncThunk(
   "payment/updateStatus",
   async ({ paymentId, status }, { rejectWithValue }) => {
     try {
+
+        console.log("🔵 Updating payment status:", { paymentId, status });
+      console.log("🔵 Full URL:", `${API}/api/v1/payments/status/${paymentId}`);
       const { data } = await axios.patch(
         `${API}/api/v1/payments/status/${paymentId}`,
         { status },
@@ -148,6 +151,12 @@ export const updatePaymentStatus = createAsyncThunk(
       );
       return data;
     } catch (error) {
+
+      console.error("❌ Update failed - Full error:", error);
+      console.error("❌ Error response:", error.response?.data);
+      console.error("❌ Error status:", error.response?.status);
+      console.error("❌ Error headers:", error.response?.headers);
+      
       const message = error.response?.data?.message || "Failed to update payment status";
       toast.error(message);
       return rejectWithValue(message);
@@ -219,8 +228,25 @@ const paymentSlice = createSlice({
       })
 
       // Admin All Payments
-      .addCase(getAllPayments.fulfilled, (state, action) => {
+           .addCase(getAllPayments.fulfilled, (state, action) => {
         state.payments = action.payload;
+      })
+
+      // ===== UPDATE PAYMENT STATUS =====
+      .addCase(updatePaymentStatus.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updatePaymentStatus.fulfilled, (state, action) => {
+        state.loading = false;
+
+        // Update payment status locally if needed
+        if (state.payment) {
+          state.payment.status = action.payload?.payment?.status;
+        }
+      })
+      .addCase(updatePaymentStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
 
       
