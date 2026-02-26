@@ -373,7 +373,13 @@ const handleInputChange = (e) => {
 
 
 const handleSubmit = async (e) => {
-  e.preventDefault();
+  if (e) e.preventDefault();
+
+  const confirmPay = window.confirm(
+    "Do you want to proceed to payment?"
+  );
+
+  if (!confirmPay) return;
 
   const submitData = new FormData();
 
@@ -561,7 +567,7 @@ rzp.open();
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit}>
+                <form>
                   <div className="max-h-[60vh] overflow-y-auto p-8">
                     <AnimatePresence mode="wait">
                       {/* Basic Information Tab */}
@@ -1197,7 +1203,8 @@ rzp.open();
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            type="submit"
+           type="button"
+onClick={handleSubmit}
             className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-colors font-medium flex items-center gap-2 shadow-lg"
             disabled={loading}
           >
