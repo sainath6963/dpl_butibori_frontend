@@ -8,6 +8,12 @@ import { getAllVideos } from "../store/slices/videoSlice";
 import PlayerRegistrationPopup from "../popups/PlayerRegistrationPopup";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/dpl-logo.jpeg";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 
 import img1 from "../assets/1.jpg.jpeg";
@@ -450,42 +456,85 @@ const FrontPageDpl = () => {
             </section>
 
             {/* Teams Carousel */}
-            <section className="py-24 px-6 bg-white" data-animate="teams">
-                <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-12">
-                        <h2 className="text-4xl md:text-5xl font-black mb-4">
-                            <span className="bg-gradient-to-r from-[#0A2472] to-[#1E293B] bg-clip-text text-transparent">
-                                FEATURED TEAMS
-                            </span>
-                        </h2>
-                           <p className="text-[#0A2472] text-lg">Proud partners supporting DPL Season 2</p>
-                    </div>
+{/* Teams Carousel */}
+<section className="py-24 px-6 bg-white" data-animate="teams">
+  <div className="max-w-6xl mx-auto">
 
-
-   {/* Sponsors Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6">
-            {sponsors.map((sponsor, index) => (
-                <div key={index} className="group relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#0A2472] to-[#1E293B] rounded-xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                    <div className="relative bg-white rounded-xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-[#E2E8F0] flex items-center justify-center h-32">
-                        <img 
-                            src={sponsor} 
-                            alt={`Sponsor ${index + 1}`}
-                            className="max-h-16 max-w-full object-contain"
-                        />
-                    </div>
-                </div>
-            ))}
-        </div>
-
-        {/* Supporting Text */}
-        <div className="text-center mt-10">
-            <p className="text-[#1E293B] text-sm">
-                Join these amazing brands in supporting cricket talent • 
-                <a href="#" className="text-[#0A2472] font-semibold hover:underline ml-1">Become a Sponsor</a>
-            </p>
-        </div>
+    {/* Heading */}
+    <div className="text-center mb-12">
+      <h2 className="text-4xl md:text-5xl font-black mb-4">
+        <span className="bg-gradient-to-r from-[#0A2472] to-[#1E293B] bg-clip-text text-transparent">
+          FRINCHIES TEAMS
+        </span>
+      </h2>
+      <p className="text-[#0A2472] text-lg">
+        Proud partners supporting DPL Season 2
+      </p>
     </div>
+
+<Swiper
+  modules={[Autoplay, Navigation]}
+  spaceBetween={30}
+  slidesPerView={2}
+  loop={true}
+  speed={2000}
+  autoplay={{
+    delay: 0,
+    disableOnInteraction: false,
+  }}
+  navigation
+  breakpoints={{
+    640: { slidesPerView: 2 },
+    768: { slidesPerView: 3 },
+    1024: { slidesPerView: 4 },
+  }}
+  className="py-8"
+>
+  {sponsors.map((sponsor, index) => (
+    <SwiperSlide key={index}>
+      
+      {/* Card */}
+      <div className="
+        bg-white
+        rounded-2xl
+        p-4 md:p-6
+        shadow-md
+        hover:shadow-xl
+        transition-all
+        duration-500
+        flex
+        items-center
+        justify-center
+        h-44 md:h-48
+        border
+        border-gray-100
+        group
+      ">
+        
+        {/* Bigger Logo */}
+        <img
+          src={sponsor}
+          alt={`Sponsor ${index + 1}`}
+          className="
+            h-24 md:h-28 lg:h-32
+            w-auto
+            object-contain
+            transition-all
+            duration-500
+            group-hover:scale-110
+          "
+        />
+
+      </div>
+
+    </SwiperSlide>
+  ))}
+</Swiper>
+
+    {/* Supporting Text */}
+    <div className="text-center mt-10">
+    </div>
+  </div>
 </section>
 
            {/* Prize Pool */}

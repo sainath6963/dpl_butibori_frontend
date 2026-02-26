@@ -164,13 +164,29 @@ const goToPreviousTab = () => {
   };
  
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+const handleInputChange = (e) => {
+  const { name, value, type, checked } = e.target;
+
+  // 👇 ROLE CHECKBOX LOGIC (ONLY ONE ALLOWED)
+  if (type === "checkbox" && 
+      ["isBatsman", "isBowler", "isWicketKeeper"].includes(name)) {
+
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      isBatsman: name === "isBatsman" ? checked : false,
+      isBowler: name === "isBowler" ? checked : false,
+      isWicketKeeper: name === "isWicketKeeper" ? checked : false
     }));
-  };
+
+    return;
+  }
+
+  // DEFAULT HANDLER
+  setFormData(prev => ({
+    ...prev,
+    [name]: type === "checkbox" ? checked : value
+  }));
+};
 
   const handleFileChange = (e, fieldName) => {
     const file = e.target.files[0];
@@ -726,34 +742,37 @@ rzp.open();
                             <div className="flex flex-wrap gap-6">
                               <label className="flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all hover:border-indigo-300 hover:bg-indigo-50">
                                 <input
-                                  type="checkbox"
-                                  name="isBatsman"
-                                  checked={formData.isBatsman}
-                                  onChange={handleInputChange}
-                                  className="mr-3 w-5 h-5 text-indigo-600"
-                                />
+  type="checkbox"
+  name="isBatsman"
+  checked={formData.isBatsman}
+  disabled={formData.isBowler || formData.isWicketKeeper}
+  onChange={handleInputChange}
+  className="mr-3 w-5 h-5 text-indigo-600"
+/>
                                 <span className="font-medium">🏏 Batsman</span>
                               </label>
                               
                               <label className="flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all hover:border-indigo-300 hover:bg-indigo-50">
                                 <input
-                                  type="checkbox"
-                                  name="isBowler"
-                                  checked={formData.isBowler}
-                                  onChange={handleInputChange}
-                                  className="mr-3 w-5 h-5 text-indigo-600"
-                                />
+  type="checkbox"
+  name="isBowler"
+  checked={formData.isBowler}
+  disabled={formData.isBatsman || formData.isWicketKeeper}
+  onChange={handleInputChange}
+  className="mr-3 w-5 h-5 text-indigo-600"
+/>
                                 <span className="font-medium">🎯 Bowler</span>
                               </label>
                               
                               <label className="flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all hover:border-indigo-300 hover:bg-indigo-50">
                                 <input
-                                  type="checkbox"
-                                  name="isWicketKeeper"
-                                  checked={formData.isWicketKeeper}
-                                  onChange={handleInputChange}
-                                  className="mr-3 w-5 h-5 text-indigo-600"
-                                />
+  type="checkbox"
+  name="isWicketKeeper"
+  checked={formData.isWicketKeeper}
+  disabled={formData.isBatsman || formData.isBowler}
+  onChange={handleInputChange}
+  className="mr-3 w-5 h-5 text-indigo-600"
+/>
                                 <span className="font-medium">🧤 Wicket Keeper</span>
                               </label>
                             </div>
