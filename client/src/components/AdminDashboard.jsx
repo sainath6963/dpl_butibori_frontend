@@ -2,22 +2,82 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllVideos, addVideo, deleteVideo } from "../store/slices/videoSlice";
 import logo from "../assets/black-logo.png";
-import { Trash2, Plus, Video, Loader2 } from "lucide-react";
+import { Trash2, Plus, Video, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "react-toastify";
+
+// Video URL validation function (matches your backend)
+const isValidVideoUrl = (url) => {
+  if (!url || typeof url !== "string") return false;
+  
+  try {
+    const parsedUrl = new URL(url);
+    const host = parsedUrl.hostname.replace("www.", "").toLowerCase();
+    
+    // Check if it's a supported platform
+    const isYouTube = host.includes("youtube.com") || host.includes("youtu.be");
+    const isInstagram = host.includes("instagram.com");
+    const isFacebook = host.includes("facebook.com") || host.includes("fb.watch");
+    
+    // Additional YouTube format validation
+    if (isYouTube) {
+      // Check for various YouTube URL patterns
+      const hasWatch = parsedUrl.searchParams.get("v") !== null;
+      const hasLive = parsedUrl.pathname.includes("/live/");
+      const hasShorts = parsedUrl.pathname.includes("/shorts/");
+      const hasEmbed = parsedUrl.pathname.includes("/embed/");
+      const isYouTuBe = host === "youtu.be";
+      
+      return hasWatch || hasLive || hasShorts || hasEmbed || isYouTuBe;
+    }
+    
+    return isYouTube || isInstagram || isFacebook;
+  } catch (err) {
+    console.error("URL validation error:", err);
+    return false;
+  }
+};
+
+// Extract video ID for display (optional)
+const extractVideoId = (url) => {
+  try {
+    const parsedUrl = new URL(url);
+    const host = parsedUrl.hostname.replace("www.", "").toLowerCase();
+    
+    if (host.includes("youtube.com") || host.includes("youtu.be")) {
+      if (host === "youtu.be") return parsedUrl.pathname.slice(1);
+      if (parsedUrl.searchParams.get("v")) return parsedUrl.searchParams.get("v");
+      if (parsedUrl.pathname.includes("/live/")) {
+        const match = parsedUrl.pathname.match(/\/live\/([^/?&]+)/);
+        if (match) return match[1];
+      }
+      if (parsedUrl.pathname.includes("/shorts/")) {
+        const match = parsedUrl.pathname.match(/\/shorts\/([^/?&]+)/);
+        if (match) return match[1];
+      }
+    }
+    return "Video ID available";
+  } catch {
+    return "Invalid URL";
+  }
+};
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { videos, loading, error, message } = useSelector((state) => state.videos);
 
-  // Form state for adding video - MATCHING BACKEND FIELDS
+  // Form state for adding video
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    youtubeUrl: "", // Changed from 'url' to 'youtubeUrl' to match backend
-    category: "Highlights", // Default category
+    videoUrl: "",
+    category: "Highlights",
   });
+  
+  // Local validation state
+  const [urlError, setUrlError] = useState("");
+  const [isValidating, setIsValidating] = useState(false);
 
   // Fetch videos on component mount
   useEffect(() => {
@@ -34,44 +94,89 @@ const AdminDashboard = () => {
     }
   }, [message, error]);
 
-  // Handle form input changes
+  // Handle form input changes with validation
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+
+    // Validate URL in real-time
+    if (name === "videoUrl" && value) {
+      setIsValidating(true);
+      
+      // Debounce validation to avoid too many checks
+      const timeoutId = setTimeout(() => {
+        if (!isValidVideoUrl(value)) {
+          setUrlError("Please enter a valid YouTube, Instagram, or Facebook video link");
+        } else {
+          setUrlError("");
+          
+          // Optional: Show extracted video info
+          const videoId = extractVideoId(value);
+          console.log("Valid video URL detected. ID:", videoId);
+        }
+        setIsValidating(false);
+      }, 500);
+
+      return () => clearTimeout(timeoutId);
+    } else if (name === "videoUrl" && !value) {
+      setUrlError("");
+    }
   };
 
   // Handle add video submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate URL before submission
+    if (!isValidVideoUrl(formData.videoUrl)) {
+      setUrlError("Please enter a valid video URL");
+      toast.error("Invalid video URL format");
+      return;
+    }
+    
     try {
+      // Extract video info for debugging
+      const videoInfo = extractVideoId(formData.videoUrl);
+      console.log("Submitting video with URL:", formData.videoUrl);
+      console.log("Extracted video info:", videoInfo);
+      
       // Prepare data to match backend structure
       const videoData = {
         title: formData.title,
         description: formData.description,
-        youtubeUrl: formData.youtubeUrl, // This matches your backend field
+        videoUrl: formData.videoUrl,
         category: formData.category || "Highlights",
-        season: "DPL 2026", // Add default season if your backend expects it
-        isFeatured: false, // Add default value
+        season: "DPL 2026",
+        isFeatured: false,
       };
 
-      console.log("Submitting video data:", videoData); // Debug log
+      console.log("Submitting video data:", videoData);
       
-      await dispatch(addVideo(videoData)).unwrap();
+      const result = await dispatch(addVideo(videoData));
+      console.log("Add video result:", result);
       
-      // Reset form on success
-      setFormData({ 
-        title: "", 
-        description: "", 
-        youtubeUrl: "",
-        category: "Highlights" 
-      });
-      setShowAddForm(false);
-      toast.success("Video added successfully!");
+      // Check if the action was successful
+      if (addVideo.fulfilled.match(result)) {
+        // Reset form on success
+        setFormData({
+          title: "",
+          description: "",
+          videoUrl: "",
+          category: "Highlights"
+        });
+        setShowAddForm(false);
+        setUrlError("");
+        toast.success("Video added successfully!");
+      } else if (addVideo.rejected.match(result)) {
+        // Handle specific error from backend
+        toast.error(result.payload || "Failed to add video");
+      }
     } catch (error) {
       console.error("Failed to add video:", error);
-      toast.error(error || "Failed to add video");
+      toast.error(error?.message || "Failed to add video");
     }
   };
 
@@ -182,26 +287,59 @@ const AdminDashboard = () => {
               />
             </div>
 
-            {/* YouTube URL Field - CHANGED to match backend */}
+            {/* Video URL Field with Validation */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                YouTube URL <span className="text-red-500">*</span>
+                Video URL <span className="text-red-500">*</span>
               </label>
-              <input
-                type="url"
-                name="youtubeUrl" // Changed from 'url' to 'youtubeUrl'
-                value={formData.youtubeUrl}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="https://youtu.be/VIDEO_ID or https://youtube.com/watch?v=VIDEO_ID"
-              />
+              <div className="relative">
+                <input
+                  type="url"
+                  name="videoUrl"
+                  value={formData.videoUrl}
+                  onChange={handleChange}
+                  required
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10 ${
+                    urlError ? 'border-red-500 bg-red-50' : ''
+                  }`}
+                  placeholder="https://www.youtube.com/live/ITXd2anufsw"
+                />
+                {isValidating && (
+                  <Loader2 className="absolute right-3 top-3 w-5 h-5 animate-spin text-gray-400" />
+                )}
+              </div>
+              
+              {/* URL Error Message */}
+              {urlError && (
+                <div className="flex items-center gap-1 mt-1 text-red-500 text-sm">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>{urlError}</span>
+                </div>
+              )}
+              
+              {/* URL Preview/Info */}
+              {formData.videoUrl && !urlError && !isValidating && (
+                <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-xs text-green-700 font-medium mb-1">✅ Valid video link detected</p>
+                  <p className="text-xs text-gray-600 break-all">{formData.videoUrl}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Video ID: {extractVideoId(formData.videoUrl)}
+                  </p>
+                </div>
+              )}
+              
+              <p className="text-xs text-gray-500 mt-2">
+                Supported platforms: YouTube (videos, live, shorts), Instagram (posts, reels), Facebook (videos, reels, watch)
+              </p>
               <p className="text-xs text-gray-500 mt-1">
-                Supports YouTube, YouTube Shorts, and youtu.be links
+                Examples:
+                <br />• https://www.youtube.com/live/ITXd2anufsw
+                <br />• https://youtu.be/ITXd2anufsw
+                <br />• https://www.instagram.com/reel/Cg4qRzCAo1S/
               </p>
             </div>
 
-            {/* Category Field - Optional but recommended */}
+            {/* Category Field */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Category
@@ -224,7 +362,7 @@ const AdminDashboard = () => {
             <div className="flex gap-3 pt-2">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !!urlError || !formData.videoUrl}
                 className="flex-1 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors disabled:bg-green-300 flex items-center justify-center gap-2"
               >
                 {loading ? (
@@ -238,7 +376,16 @@ const AdminDashboard = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setShowAddForm(false)}
+                onClick={() => {
+                  setShowAddForm(false);
+                  setUrlError("");
+                  setFormData({
+                    title: "",
+                    description: "",
+                    videoUrl: "",
+                    category: "Highlights"
+                  });
+                }}
                 className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Cancel
@@ -248,7 +395,7 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Videos List */}
+      {/* Videos List - Rest of your component remains the same */}
       <div className="bg-white shadow-xl rounded-xl p-6 border">
         <h2 className="text-xl font-semibold mb-4">Video Library</h2>
 
@@ -312,12 +459,12 @@ const AdminDashboard = () => {
                     
                     {/* Video URL */}
                     <a
-                      href={video.youtubeUrl || video.url}
+                      href={video.videoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 text-sm block mb-3 truncate hover:underline"
                     >
-                      {video.youtubeUrl || video.url}
+                      {video.videoUrl}
                     </a>
 
                     {/* Upload Date */}

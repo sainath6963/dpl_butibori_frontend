@@ -15,7 +15,7 @@
 //   const [formData, setFormData] = useState({
 //     title: '',
 //     description: '',
-//     youtubeUrl: '',
+//     videoUrl: '',
 //     category: 'Highlights',
 //     isPublished: true
 //   });
@@ -322,8 +322,8 @@
 //                 <label className="block text-sm font-medium text-gray-300 mb-1">YouTube URL *</label>
 //                 <input
 //                   type="url"
-//                   name="youtubeUrl"
-//                   value={formData.youtubeUrl}
+//                   name="videoUrl"
+//                   value={formData.videoUrl}
 //                   onChange={handleInputChange}
 //                   required
 //                   placeholder="https://youtu.be/..."
@@ -405,7 +405,7 @@ const VideoManagement = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    youtubeUrl: '',
+    videoUrl: '',
     category: 'Highlights',
     isPublished: true
   });
@@ -451,8 +451,13 @@ const VideoManagement = () => {
           onClick={() => playVideo(video)}
         >
           <div className="relative aspect-video">
-            <img
-              src={video.thumbnail}
+         <img
+  src={
+    video.thumbnail ||
+    `https://img.youtube.com/vi/${
+      video.videoId || video.youtubeId
+    }/mqdefault.jpg`
+  }
               alt={video.title}
               className="w-full h-full object-cover"
             />
@@ -507,7 +512,12 @@ const VideoManagement = () => {
               <td className="px-6 py-4">
                 <div className="flex items-center gap-3">
                   <img
-                    src={video.thumbnail}
+  src={
+    video.thumbnail ||
+    `https://img.youtube.com/vi/${
+      video.videoId || video.youtubeId
+    }/mqdefault.jpg`
+  }
                     alt={video.title}
                     className="w-16 h-9 object-cover rounded"
                   />
@@ -586,7 +596,9 @@ const VideoManagement = () => {
               <iframe
                 width="100%"
                 height="100%"
-                src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}?autoplay=1`}
+               src={`https://www.youtube.com/embed/${
+  selectedVideo.videoId || selectedVideo.youtubeId
+}?autoplay=1`}
                 title={selectedVideo.title}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -717,8 +729,8 @@ const VideoManagement = () => {
                 <label className="block text-sm font-medium text-[#F1F5F9] mb-1">YouTube URL *</label>
                 <input
                   type="url"
-                  name="youtubeUrl"
-                  value={formData.youtubeUrl}
+                  name="videoUrl"
+                  value={formData.videoUrl}
                   onChange={handleInputChange}
                   required
                   placeholder="https://youtu.be/..."

@@ -52,32 +52,64 @@ const FrontPageDpl = () => {
         seconds: 0
     });
 
+    useEffect(() => {
+  console.log("🎥 Redux videos:", videoList);
+}, [videoList]);
+
     // Fetch videos on component mount
     useEffect(() => {
         dispatch(getAllVideos());
     }, [dispatch]);
 
     // Transform videos from backend to format needed for display
-    const videos = videoList?.map(video => ({
-        id: video.youtubeId, // Use the youtubeId from backend
-        title: video.title,
-        description: video.description || '',
-        thumbnail: video.thumbnail,
-        category: video.category,
-        uploadDate: video.uploadDate,
-        _id: video._id
-    })) || [];
+// Transform videos from backend → display format (supports OLD + NEW DB)
+const videos = Array.isArray(videoList)
+  ? videoList
+      .map((video) => {
+        // ✅ support both schemas
+        const id =
+          video.videoId ||     // new schema
+          video.youtubeId ||   // old schema
+          null;
+
+        const platform =
+          video.platform ||
+          (video.youtubeId ? "youtube" : "youtube");
+
+        return {
+          id,
+          platform,
+          title: video.title,
+          description: video.description || "",
+          thumbnail:
+            video.thumbnail ||
+            (id
+              ? `https://img.youtube.com/vi/${id}/mqdefault.jpg`
+              : null),
+          category: video.category,
+          uploadDate: video.uploadDate,
+          _id: video._id,
+        };
+      })
+      .filter((v) => v.id) // ✅ remove broken videos
+  : [];
+
+// DEBUG (remove later)
+console.log("🎬 FINAL VIDEOS:", videos);
 
     // Fallback videos if no videos from backend
     const fallbackVideos = [
-        { id: 'lcw4TDMBjZA', title: 'CCL 2026 - Official Teaser' },
-        { id: '3tmd-ClpJxA', title: 'Highlights: Mumbai vs Pune' },
-        { id: 'fRd6wJ5J2eM', title: 'Behind the Scenes - Jersey Launch' },
-        { id: 'ZwT7Jc2n5dE', title: 'Player Interviews' },
+        { id: 'JpTY6OSgDD4', title: 'CCL 2026 - Official Teaser' },
+        // { id: '3tmd-ClpJxA', title: 'Highlights: Mumbai vs Pune' },
+        // { id: 'fRd6wJ5J2eM', title: 'Behind the Scenes - Jersey Launch' },
+        // { id: 'ZwT7Jc2n5dE', title: 'Player Interviews' },
     ];
 
     // Use backend videos if available, otherwise use fallback
-    const displayVideos = videos.length > 0 ? videos : fallbackVideos;
+    const allVideos = videos.length > 0 ? videos : fallbackVideos;
+
+// ⭐ show only first 4 on homepage
+const displayVideos = allVideos.slice(0, 4);
 
     // Reset current video index if it's out of bounds
     useEffect(() => {
@@ -340,96 +372,173 @@ const FrontPageDpl = () => {
             </section>
 
             {/* YouTube Video Slider Section */}
-            <section className="py-24 px-6 bg-white" data-animate="videos">
-                <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-12">
-                        <h2 className="text-4xl md:text-5xl font-black mb-4">
-                            <span className="bg-gradient-to-r from-[#0A2472] to-[#1E293B] bg-clip-text text-transparent">
-                                LATEST VIDEOS
-                            </span>
-                        </h2>
-                        <p className="text-[#1E293B] text-lg">
-                            {videosLoading ? 'Loading videos...' : 'Watch highlights, interviews & behind the scenes'}
-                        </p>
-                        {!videosLoading && videos.length === 0 && (
-                            <p className="text-[#94A3B8] text-sm mt-2">No videos available yet. Check back soon!</p>
-                        )}
-                    </div>
+           {/* YouTube Video Slider Section */}
+{/* ================= VIDEO SLIDER SECTION ================= */}
+<section className="py-24 px-6 bg-white" data-animate="videos">
+  <div className="max-w-6xl mx-auto">
 
-                    {displayVideos.length > 0 && (
-                        <div className="space-y-6">
-                           {/* Main Video Display */}
-<div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white">
-    <div className="aspect-video relative">
-        <iframe
-            className="w-full h-full"
-            src={`https://www.youtube.com/embed/${displayVideos[currentVideo].id}`}
-            title={displayVideos[currentVideo].title}
-            allowFullScreen
-        ></iframe>
-        
-        {/* Video Info Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0A2472] via-[#0A2472]/80 to-transparent p-6">
-            <h3 className="text-white text-2xl font-bold flex items-center gap-2 drop-shadow-lg">
-                <span className="w-1 h-8 bg-white rounded-full"></span>
-                {displayVideos[currentVideo].title}
-            </h3>
-            {displayVideos[currentVideo].description && (
-                <p className="text-white/90 text-sm mt-2 line-clamp-1 font-medium drop-shadow">
-                    {displayVideos[currentVideo].description}
-                </p>
-            )}
-            {displayVideos[currentVideo].category && (
-                <span className="absolute top-4 right-4 bg-white text-[#0A2472] text-xs px-3 py-1 rounded-full font-medium shadow-lg">
-                    {displayVideos[currentVideo].category}
-                </span>
-            )}
-        </div>
+    {/* HEADER */}
+    <div className="text-center mb-12">
+      <h2 className="text-4xl md:text-5xl font-black mb-4">
+        <span className="bg-gradient-to-r from-[#0A2472] to-[#1E293B] bg-clip-text text-transparent">
+          LATEST VIDEOS
+        </span>
+      </h2>
+
+      <p className="text-[#1E293B] text-lg">
+        {videosLoading
+          ? "Loading videos..."
+          : "Watch highlights, interviews & behind the scenes"}
+      </p>
     </div>
-</div>
 
-                          {/* Video Thumbnails */}
-<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-    {displayVideos.map((video, index) => (
-        <button
-            key={video._id || index}
-            onClick={() => setCurrentVideo(index)}
-            className={`relative rounded-xl overflow-hidden transition-all duration-300 group ${
-                currentVideo === index ? 'ring-2 ring-white ring-offset-2' : 'hover:ring-2 hover:ring-[#94A3B8] hover:ring-offset-2'
-            }`}
-        >
-            <div className="aspect-video">
-                <img
-                    src={video.thumbnail || `https://img.youtube.com/vi/${video.id}/mqdefault.jpg`}
+    {displayVideos.length > 0 && (() => {
+
+      const current = displayVideos[currentVideo];
+
+      // ✅ DO NOT RENDER PLAYER UNTIL DATA READY
+      if (!current || !current.id) {
+        return (
+          <div className="text-center py-20 text-gray-400">
+            Loading video...
+          </div>
+        );
+      }
+
+      /* ================= PLAYER SRC BUILDER ================= */
+      let playerSrc = "";
+
+      switch (current.platform) {
+        case "youtube":
+        default:
+          playerSrc = `https://www.youtube.com/embed/${current.id}?rel=0&modestbranding=1`;
+          break;
+
+        case "instagram":
+          playerSrc = `${current.id}embed`;
+          break;
+
+        case "facebook":
+          playerSrc = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(
+            current.id
+          )}&show_text=false`;
+          break;
+      }
+
+      return (
+        <div className="space-y-6">
+
+          {/* ================= MAIN PLAYER ================= */}
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white">
+            <div className="aspect-video relative">
+
+              <iframe
+                key={current.id}   // ⭐ forces reload when video changes
+                className="w-full h-full"
+                src={playerSrc}
+                title={current.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+
+              {/* INFO OVERLAY */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0A2472] via-[#0A2472]/80 to-transparent p-6">
+                <h3 className="text-white text-2xl font-bold flex items-center gap-2">
+                  <span className="w-1 h-8 bg-white rounded-full"></span>
+                  {current.title}
+                </h3>
+
+                {current.description && (
+                  <p className="text-white/90 text-sm mt-2 line-clamp-1">
+                    {current.description}
+                  </p>
+                )}
+
+                {current.category && (
+                  <span className="absolute top-4 right-4 bg-white text-[#0A2472] text-xs px-3 py-1 rounded-full font-medium shadow-lg">
+                    {current.category}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ================= THUMBNAILS ================= */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {displayVideos.map((video, index) => (
+              <button
+                key={video._id || index}
+                onClick={() => setCurrentVideo(index)}
+                className={`relative rounded-xl overflow-hidden transition-all duration-300 group ${
+                  currentVideo === index
+                    ? "ring-2 ring-white ring-offset-2"
+                    : "hover:ring-2 hover:ring-[#94A3B8] hover:ring-offset-2"
+                }`}
+              >
+                <div className="aspect-video">
+                  <img
+                    src={
+                      video.thumbnail ||
+                      `https://img.youtube.com/vi/${video.id}/mqdefault.jpg`
+                    }
                     alt={video.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     onError={(e) => {
-                        e.target.src = `https://img.youtube.com/vi/${video.id}/mqdefault.jpg`;
+                      e.target.src = `https://img.youtube.com/vi/${video.id}/mqdefault.jpg`;
                     }}
-                />
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0A2472] via-[#0A2472]/60 to-transparent"></div>
-            <div className="absolute bottom-2 left-2 right-2">
-                <p className="text-white text-xs font-medium line-clamp-1 text-left drop-shadow-lg">
-                    {video.title}
-                </p>
-            </div>
-            {currentVideo === index && (
-                <div className="absolute top-2 right-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
-            )}
-            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors"></div>
-        </button>
-    ))}
-</div>
-                            
-                            {/* Video count indicator */}
-                            <div className="text-center text-[#1E293B] text-sm">
-                                Showing {displayVideos.length} video{displayVideos.length !== 1 ? 's' : ''}
-                            </div>
-                        </div>
-                    )}
+                  />
                 </div>
-            </section>
+
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A2472]/80 to-transparent"></div>
+
+                <div className="absolute bottom-2 left-2 right-2">
+                  <p className="text-white text-xs font-medium line-clamp-1 text-left">
+                    {video.title}
+                  </p>
+                </div>
+
+                {currentVideo === index && (
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* COUNT */}
+          {/* COUNT + VIEW MORE */}
+<div className="text-center space-y-4">
+
+  {/* <div className="text-[#1E293B] text-sm">
+    Showing {displayVideos.length} of {allVideos.length} videos
+  </div> */}
+
+  {allVideos.length > 4 && (
+    <button
+      onClick={() => navigate("/videos")}
+      className="
+        px-8 py-3
+        bg-[#0A2472]
+        text-white
+        rounded-full
+        font-semibold
+        hover:bg-[#1E293B]
+        transition-all
+        duration-300
+        shadow-lg
+        hover:scale-105
+      "
+    >
+      View More Videos →
+    </button>
+  )}
+
+</div>
+
+        </div>
+      );
+    })()}
+  </div>
+</section>
 
             {/* Stats Counter Section */}
             <section className="py-20 bg-gradient-to-r from-[#0A2472] to-[#1E293B] text-white">

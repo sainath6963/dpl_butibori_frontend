@@ -21,11 +21,22 @@ const videoSlice = createSlice({
       state.message = null;
     },
     getAllVideosSuccess(state, action) {
-      state.loading = false;
-      state.videos = action.payload.videos || action.payload;
-      state.totalVideos = action.payload.totalVideos || action.payload.length;
-      state.error = null;
-    },
+  state.loading = false;
+
+  console.log("📦 API RESPONSE:", action.payload);
+
+  // ✅ ALWAYS FORCE ARRAY
+  if (Array.isArray(action.payload)) {
+    state.videos = action.payload;
+  } else if (Array.isArray(action.payload.videos)) {
+    state.videos = action.payload.videos;
+  } else {
+    state.videos = [];
+  }
+
+  state.totalVideos = state.videos.length;
+  state.error = null;
+},
     getAllVideosFailed(state, action) {
       state.loading = false;
       state.error = action.payload;
