@@ -264,7 +264,7 @@ const displayVideos = allVideos.slice(0, 4);
     {/* Date - Bigger Size */}
     <div className="text-center">
       <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-white">
-        1st TO 6TH JUNE 2026
+        1st TO 6th  JUNE 2026
       </p>
     </div>
 
@@ -341,7 +341,9 @@ const displayVideos = allVideos.slice(0, 4);
   {/* Additional Prizes Tag */}
   <div className="mt-6 flex items-center gap-2 bg-white/10 backdrop-blur-sm px-5 py-2 rounded-full border border-white/20">
     <span className="text-yellow-400 text-sm">🏆</span>
-    <span className="text-white/90 text-sm">Registration Starts On 1st March 2026 to 10th April 2026</span>
+    <span className="text-white/90 text-sm">Registration Starts On 1st March 2026 to 10th April 2026 <br />
+इस टूर्नामेंट के लिए नागपुर ज़िला ग्रामीण क्षेत्र के ही खिलाड़ी रजिस्ट्रेशन कर सकते है  </span>
+    
     <span className="text-yellow-400 text-sm">🏆</span>
   </div>
 </div>
@@ -527,108 +529,144 @@ const displayVideos = allVideos.slice(0, 4);
 </section>
 
             {/* Stats Counter Section */}
-            <section className="py-20 bg-gradient-to-r from-[#0A2472] to-[#1E293B] text-white">
-                <div className="max-w-6xl mx-auto px-6">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                        {[
-                            { number: "16", label: "Teams", icon: "fa-solid fa-people-group" },
-                            { number: "32", label: "Matches", icon: "fa-solid fa-calendar-check" },
-                            { number: "150", label: "Players", icon: "fa-solid fa-user" },
-                            { number: "50K", label: "Audience", icon: "fa-solid fa-eye" },
-                        ].map((item, i) => (
-                            <div key={i} className="text-center group">
-                                <div className="w-16 h-16 mx-auto bg-white/5 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white/10 group-hover:scale-110 transition-all duration-300">
-                                    <i className={`${item.icon} text-2xl text-white`}></i>
-                                </div>
-                                <div className="text-3xl font-bold text-white mb-1">
-                                    {item.number}+
-                                </div>
-                                <div className="text-blue-200 text-sm font-medium">{item.label}</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+           {/* Stats Counter Section */}
+<section className="relative py-24 bg-gradient-to-r from-[#0A2472] via-[#14213D] to-[#020617] text-white overflow-hidden">
+
+  {/* subtle background glow */}
+  <div className="absolute inset-0 opacity-20 pointer-events-none">
+    <div className="absolute w-72 h-72 bg-blue-500 blur-3xl rounded-full -top-10 -left-10"></div>
+    <div className="absolute w-72 h-72 bg-cyan-400 blur-3xl rounded-full -bottom-10 -right-10"></div>
+  </div>
+
+  <div className="relative max-w-6xl mx-auto px-6">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+
+      {[
+        { number: "16", label: "Teams", icon: "fa-solid fa-people-group" },
+        { number: "32", label: "Matches", icon: "fa-solid fa-calendar-check" },
+        { number: "150", label: "Players", icon: "fa-solid fa-user" },
+        { number: "50K", label: "Audience", icon: "fa-solid fa-eye" },
+      ].map((item, i) => (
+        <div
+          key={i}
+          className="group text-center rounded-2xl p-8 bg-white/5 backdrop-blur-md border border-white/10
+          hover:bg-white/10 hover:-translate-y-2 hover:shadow-2xl
+          transition-all duration-300"
+        >
+          {/* Icon */}
+          <div className="w-16 h-16 mx-auto mb-5 flex items-center justify-center
+            rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-400/20
+            group-hover:scale-110 transition-transform duration-300">
+
+            <i className={`${item.icon} text-2xl text-white`} />
+          </div>
+
+          {/* Number */}
+          <h3 className="text-4xl font-bold mb-2 tracking-wide">
+            {item.number}+
+          </h3>
+
+          {/* Label */}
+          <p className="text-blue-200 text-sm font-medium tracking-wide">
+            {item.label}
+          </p>
+        </div>
+      ))}
+
+    </div>
+  </div>
+</section>
 
             {/* Teams Carousel */}
 {/* Teams Carousel */}
-<section className="py-24 px-6 bg-white" data-animate="teams">
-  <div className="max-w-6xl mx-auto">
+{/* Teams Carousel */}
+<section className="relative py-24 px-6 bg-gradient-to-b from-white to-slate-50 overflow-hidden" data-animate="teams">
+
+  {/* subtle background accent */}
+  <div className="absolute inset-0 pointer-events-none opacity-30">
+    <div className="absolute w-72 h-72 bg-blue-100 blur-3xl rounded-full top-10 left-10"></div>
+    <div className="absolute w-72 h-72 bg-indigo-100 blur-3xl rounded-full bottom-10 right-10"></div>
+  </div>
+
+  <div className="relative max-w-6xl mx-auto">
 
     {/* Heading */}
-    <div className="text-center mb-12">
-      <h2 className="text-4xl md:text-5xl font-black mb-4">
+    <div className="text-center mb-14">
+      <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
         <span className="bg-gradient-to-r from-[#0A2472] to-[#1E293B] bg-clip-text text-transparent">
           FRINCHIES TEAMS
         </span>
       </h2>
-      <p className="text-[#0A2472] text-lg">
+
+      <p className="text-slate-600 text-lg max-w-2xl mx-auto">
         Proud partners supporting DPL Season 2
       </p>
     </div>
 
-<Swiper
-  modules={[Autoplay, Navigation]}
-  spaceBetween={30}
-  slidesPerView={2}
-  loop={true}
-  speed={2000}
-  autoplay={{
-    delay: 0,
-    disableOnInteraction: false,
-  }}
-  navigation
-  breakpoints={{
-    640: { slidesPerView: 2 },
-    768: { slidesPerView: 3 },
-    1024: { slidesPerView: 4 },
-  }}
-  className="py-8"
->
-  {sponsors.map((sponsor, index) => (
-    <SwiperSlide key={index}>
-      
-      {/* Card */}
-      <div className="
-        bg-white
-        rounded-2xl
-        p-4 md:p-6
-        shadow-md
-        hover:shadow-xl
-        transition-all
-        duration-500
-        flex
-        items-center
-        justify-center
-        h-44 md:h-48
-        border
-        border-gray-100
-        group
-      ">
-        
-        {/* Bigger Logo */}
-        <img
-          src={sponsor}
-          alt={`Sponsor ${index + 1}`}
-          className="
-            h-24 md:h-28 lg:h-32
-            w-auto
-            object-contain
-            transition-all
-            duration-500
-            group-hover:scale-110
+    {/* Swiper */}
+    <Swiper
+      modules={[Autoplay, Navigation]}
+      spaceBetween={24}
+      slidesPerView={2}
+      loop={true}
+      speed={2500}
+      autoplay={{
+        delay: 0,
+        disableOnInteraction: false,
+      }}
+      navigation
+      breakpoints={{
+  640: { slidesPerView: 1 },
+  768: { slidesPerView: 2 },
+  
+}}
+      className="py-10"
+    >
+      {sponsors.map((sponsor, index) => (
+        <SwiperSlide key={index}>
+
+          {/* Card */}
+          <div
+            className="
+            group relative
+           h-60 md:h-72 lg:h-80
+            rounded-2xl
+            bg-white/80
+            backdrop-blur-md
+            border border-slate-200
+            shadow-sm
+            hover:shadow-2xl
+            hover:-translate-y-2
+            transition-all duration-500
+            flex items-center justify-center
+            overflow-hidden
           "
-        />
+          >
 
-      </div>
+            {/* hover gradient overlay */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-blue-50 to-indigo-50"></div>
 
-    </SwiperSlide>
-  ))}
-</Swiper>
+            {/* Logo */}
+            <img
+              src={sponsor}
+              alt={`Sponsor ${index + 1}`}
+          className="
+  relative z-10
+  h-full
+  max-h-[220px]
+  w-auto
+  object-contain
+  transition-transform duration-500
+  group-hover:scale-110
+"
+            />
 
-    {/* Supporting Text */}
-    <div className="text-center mt-10">
-    </div>
+          </div>
+
+        </SwiperSlide>
+      ))}
+    </Swiper>
+
   </div>
 </section>
 

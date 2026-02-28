@@ -1134,8 +1134,6 @@ rzp.open();
                             {[
                               { id: 'playerPhoto', label: 'Player Photo', required: true, accept: 'image/*' },
                               { id: 'aadharCard', label: 'Aadhar Card', required: true, accept: 'image/*,.pdf' },
-                              { id: 'panCard', label: 'PAN Card', required: false, accept: 'image/*,.pdf' },
-                              { id: 'drivingLicense', label: 'Driving License', required: false, accept: 'image/*,.pdf' },
                             ].map((doc) => (
                               <motion.div
                                 key={doc.id}
