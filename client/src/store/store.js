@@ -5,6 +5,7 @@ import userReducer from "./slices/userSlice"
 import videoReducer from "./slices/videoSlice"; 
 import playerReducer from "./slices/playerSlice";
 import paymentReducer from "./slices/paymentSlice";
+import seasonImagesReducer from "./slices/seasonImagesSlice";
 
 
 export const store = configureStore({
@@ -15,6 +16,7 @@ export const store = configureStore({
         videos: videoReducer,
         players: playerReducer,
         payment: paymentReducer,
+        seasonImages: seasonImagesReducer,
     },
     
 })

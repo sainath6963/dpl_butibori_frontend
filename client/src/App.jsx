@@ -18,6 +18,7 @@ import TrialDaySelection from "./pages/TrialDaySelection";
 import DayOne from "./pages/DayOne";
 import DayTwo from "./pages/DayTwo";
 import ManagingDirector from "./pages/ManagingDirector";
+import SeasonGallery from "./pages/SeasonGallery";
 
 // Layout component to wrap pages with Header
 const PageLayout = ({ children }) => {
@@ -113,6 +114,22 @@ const App = () => {
           element={
             <PageLayout>
               <ManagingDirector />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/seasononeimgs"
+          element={
+            <PageLayout>
+              <SeasonGallery />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/seasontwoimgs"
+          element={ 
+            <PageLayout>
+             <SeasonGallery />
             </PageLayout>
           }
         />
