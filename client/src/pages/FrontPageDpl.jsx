@@ -411,7 +411,9 @@ const displayVideos = allVideos.slice(0, 4);
       switch (current.platform) {
         case "youtube":
         default:
-          playerSrc = `https://www.youtube.com/embed/${current.id}?rel=0&modestbranding=1`;
+          playerSrc =
+  `https://www.youtube.com/embed/${current.id}?` +
+  `rel=0&modestbranding=1&playsinline=1&enablejsapi=1`;
           break;
 
         case "instagram":
@@ -431,35 +433,19 @@ const displayVideos = allVideos.slice(0, 4);
           {/* ================= MAIN PLAYER ================= */}
           <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white">
             <div className="aspect-video relative">
+<iframe
+  key={current.id}
+  className="w-full h-full relative z-10"
+  src={playerSrc}
+  title={current.title}
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+  allowFullScreen
+  playsInline
+  referrerPolicy="strict-origin-when-cross-origin"
+/>
 
-              <iframe
-                key={current.id}   // ⭐ forces reload when video changes
-                className="w-full h-full"
-                src={playerSrc}
-                title={current.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-
-              {/* INFO OVERLAY */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0A2472] via-[#0A2472]/80 to-transparent p-6">
-                <h3 className="text-white text-2xl font-bold flex items-center gap-2">
-                  <span className="w-1 h-8 bg-white rounded-full"></span>
-                  {current.title}
-                </h3>
-
-                {current.description && (
-                  <p className="text-white/90 text-sm mt-2 line-clamp-1">
-                    {current.description}
-                  </p>
-                )}
-
-                {current.category && (
-                  <span className="absolute top-4 right-4 bg-white text-[#0A2472] text-xs px-3 py-1 rounded-full font-medium shadow-lg">
-                    {current.category}
-                  </span>
-                )}
-              </div>
+             
             </div>
           </div>
 

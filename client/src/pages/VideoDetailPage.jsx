@@ -199,7 +199,7 @@
 //                 src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}?autoplay=1`}
 //                 title={selectedVideo.title}
 //                 frameBorder="0"
-//                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+//                 allow="accelerometer; autoplay; ; encrypted-media; gyroscope; picture-in-picture"
 //                 allowFullScreen
 //                 className="w-full h-full"
 //               />
@@ -601,7 +601,7 @@ const VideoManagement = () => {
 }?autoplay=1`}
                 title={selectedVideo.title}
                 frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; ; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 className="w-full h-full"
               />
