@@ -10,6 +10,7 @@ import AdminDashboard from "../components/AdminDashboard";
 import Users from "../components/Users";
 import Players from "../components/players"
 // import MyBorrowedBooks from "../components/MyBorrowedBooks";
+import SeasonGalleryManager from "../pages/SeasonGalleryManager";
 
 const Home = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
@@ -56,8 +57,12 @@ const Home = () => {
         }
         return null;
 
-      // case "MyBorrowedBooks":
-      //   return <MyBorrowedBooks />;
+     // ✅ ADD THIS
+  case "GalleryManagement":
+    if (user?.role === "admin") {
+      return <SeasonGalleryManager />;
+    }
+    return null;
 
       default:
         return user?.role === "admin" ? (

@@ -16,6 +16,7 @@ import {
 // import { fetchUserBorrowedBooks } from "../store/slices/borrowSlice";
 // import AddNewAdmin from "../popups/AddNewAdmin";
 import SettingPopup from "../popups/SettingPopup";
+import { ImagePlus } from "lucide-react";
 
 const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
   const dispatch = useDispatch();
@@ -69,6 +70,8 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
             <span className="text-sm font-medium">Dashboard</span>
           </button>
 
+
+
          
 
           {isAuthenticated && user?.role === "admin" && (
@@ -84,6 +87,18 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
                 <FaUsers className="w-5 h-5" />
                 <span className="text-sm font-medium">Players List</span>
               </button>
+
+
+              <button
+  className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-800/50 transition"
+  onClick={() => {
+    setSelectedComponent("GalleryManagement");
+    setIsSideBarOpen(false);
+  }}
+>
+  <ImagePlus className="w-5 h-5" />
+  <span className="text-sm font-medium">Gallery Management</span>
+</button>
 
              
 
